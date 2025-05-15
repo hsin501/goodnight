@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/static/half-moon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="goodnight 夜間護膚品牌，結合沐浴乳、洗面乳、晚安面霜與保濕噴霧，打造完整的沉靜修護儀式。"
+    />
+    <meta
+      name="keywords"
+      content="goodnight, 夜間護膚, 沐浴乳, 洗面乳, 晚安面霜, 保濕噴霧"
+    />
+    <title>goodnight｜入夜四部曲</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas class="webgl"></canvas>
+      <header>
+        <div class="glass-container" id="glass">
+          <ul>
+            <li><a href="#section0">logo</a></li>
+            <li><a href="#section1">夜語洗顏慕斯</a></li>
+            <li><a href="#section2">月夜沐浴露</a></li>
+            <li><a href="#section3">夢境修護霜</a></li>
+            <li><a href="#section4">午夜保濕噴霧</a></li>
+          </ul>
+        </div>
+      </header>
+
+      <!-- ===== 顏色控制按鈕 ===== -->
+      <button
+        id="toggleColorButton"
+        class="glass-effect"
+        aria-label="打開顏色調整面板"
+      >
+        <!-- SVG 調色盤圖示 -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="100"
+          height="100"
+          viewBox="0 0 32 32"
+        >
+          <circle cx="10" cy="12" r="2" />
+          <circle cx="16" cy="9" r="2" />
+          <circle cx="22" cy="12" r="2" />
+          <circle cx="23" cy="18" r="2" />
+          <circle cx="19" cy="23" r="2" />
+          <path
+            d="M16.54,2A14,14,0,0,0,2,16a4.82,4.82,0,0,0,6.09,4.65l1.12-.31A3,3,0,0,1,13,23.24V27a3,3,0,0,0,3,3A14,14,0,0,0,30,15.46,14.05,14.05,0,0,0,16.54,2Zm8.11,22.31A11.93,11.93,0,0,1,16,28a1,1,0,0,1-1-1V23.24a5,5,0,0,0-5-5,5.07,5.07,0,0,0-1.33.18l-1.12.31A2.82,2.82,0,0,1,4,16,12,12,0,0,1,16.47,4,12.18,12.18,0,0,1,28,15.53,11.89,11.89,0,0,1,24.65,24.32Z"
+          />
+        </svg>
+      </button>
+
+      <!-- ===== 顏色控制面板  ===== -->
+      <div class="color-controls glass-effect">
+        <div class="control-item">
+          <label for="meshColorPicker">客製化顏色</label>
+          <input type="color" id="meshColorPicker" value="#81D4FA" />
+        </div>
+        <div class="control-item">
+          <label for="particleColorPicker">雲朵顏色</label>
+          <input type="color" id="particleColorPicker" value="#CFD8DC" />
+        </div>
+      </div>
+      <!-- ============================== -->
+
+      <section class="section" id="section0">
+        <div class="section-content">
+          <h1>夜的開始，從肌膚沉靜開始<br /></h1>
+          <p>
+            白天，是為了世界；夜晚，該為自己。 <br />goodnight
+            精選四步夜間保養，從潔淨、舒緩、修護到保濕，<br />
+            讓肌膚在靜謐中修復、在雲朵般的柔光中沉靜入眠。<br />
+            每一夜，都是好夢的開始。
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="section1">
+        <div class="product-visual">
+          <div class="threejs-placeholder">
+            [Three.js 產品模型: 夜語洗顏慕斯]
+          </div>
+        </div>
+        <div class="section-content">
+          <h1>夜語洗顏慕斯<br /></h1>
+          <h2>Night Foam</h2>
+          <p>
+            以氨基酸系溫和潔淨，深層淨化不緊繃。<br />
+            goodnight 洗面乳專為夜間修護前的清潔設計，<br />
+            帶走一天的油脂與汙染，為保養吸收打好基礎。<br />
+            無香低敏，讓每一次洗臉都是放鬆的開始。
+          </p>
+          <p>$100</p>
+          <button class="cta-button">Customize Color</button>
+          <button class="cta-button">Buy Now</button>
+        </div>
+      </section>
+
+      <section class="section" id="section2">
+        <div class="section-content">
+          <h1>月夜沐浴露<br /></h1>
+          <h2>Moon Wash</h2>
+          <p>
+            天然植萃與微米泡沫，溫柔包覆每一寸肌膚。<br />
+            精選洋甘菊與薰衣草成分，幫助舒緩壓力、柔潤肌膚，<br />
+            同時釋放淡雅香氣，營造入夜前的舒壓氛圍。<br />
+            goodnight，從沐浴開始，讓疲憊卸下。
+          </p>
+          <button class="cta-button">Customize Color</button>
+          <button class="cta-button">Buy Now</button>
+        </div>
+        <div class="product-visual">
+          <div class="threejs-placeholder">[Three.js 產品模型: 月夜沐浴露]</div>
+        </div>
+      </section>
+
+      <section class="section" id="section3">
+        <div class="product-visual">
+          <div class="threejs-placeholder">[Three.js 產品模型: 夢境修護霜]</div>
+        </div>
+        <div class="section-content">
+          <h1>夢境修護霜<br /></h1>
+          <h2>Dream Cream</h2>
+          <p>
+            富含神經醯胺與玻尿酸，深層修護夜間屏障。<br />
+            goodnight 晚安面霜鎖水同時促進肌膚夜間自我修復，<br />
+            質地絲滑不黏膩，讓你安心入眠，醒來肌膚飽滿透亮。<br />
+            每一夜的呵護，都是明日光采的起點。
+          </p>
+          <button class="cta-button">Customize Color</button>
+          <button class="cta-button">Buy Now</button>
+        </div>
+      </section>
+      <section class="section" id="section4">
+        <div class="section-content">
+          <h1>午夜保濕噴霧<br /></h1>
+          <h2>Midnight Mist</h2>
+          <p>
+            立即舒緩乾燥，全天候維持水潤狀態。<br />
+            goodnight 保濕噴霧添加積雪草與玻尿酸複合精華，<br />
+            可作為妝前、妝後定妝水，也可日常保濕補水。<br />
+            細緻水霧，輕盈不負擔，為肌膚注入持久水光感。
+          </p>
+          <button class="cta-button">Customize Color</button>
+          <button class="cta-button">Buy Now</button>
+        </div>
+        <div class="product-visual">
+          <div class="threejs-placeholder">
+            [Three.js 產品模型: 午夜保濕噴霧]
+          </div>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="/src/script.js"></script>
+  </body>
+</html>
