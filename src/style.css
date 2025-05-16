@@ -86,11 +86,11 @@ img {
 /* 交錯佈局  */
 .section:nth-child(even) {
   /* 視覺在左，內容在右 */
-  flex-direction: row;
+  flex-direction: row !important;
 }
 .section:nth-child(odd):not(:first-child) {
   /* 內容在左，視覺在右 */
-  flex-direction: row-reverse;
+  flex-direction: row-reverse !important;
 }
 
 .threejs-placeholder {

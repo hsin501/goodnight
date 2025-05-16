@@ -12,20 +12,14 @@ import {
   createMaterials,
   // createMeshes,
   // createCloudMeshes,
-  loadProductModels,
+  // loadProductModels,
   createCloud1,
 } from './objects.js';
-import {
-  setupScrollListener,
-  setupCursorListener,
-  setupResizeListener,
-  setupDOMInteractions,
-} from './interactions.js';
+import { setupCursorListener, setupDOMInteractions } from './interactions.js';
 import { startAnimation } from './animation.js';
 
 //獲取Canvas元素
 const canvas = document.querySelector('canvas.webgl');
-let productModelsData = []; // 存儲加載的模型數據
 
 async function init() {
   if (!canvas) {
@@ -46,17 +40,6 @@ async function init() {
     // scene.add(...sectionMeshes);
 
     //==== 載入產品模型 ====
-    productModelsData = await loadProductModels(null);
-    let sectionMeshes = [];
-    if (productModelsData.length > 0) {
-      productModelsData.forEach((data) => {
-        scene.add(data.model);
-      });
-      sectionMeshes = productModelsData.map((data) => data.model);
-      console.log('產品模型已加載');
-    } else {
-      console.log('產品模型加載失敗');
-    }
 
     // //==== 雲的創建 ====
     const firstCloudConfig = [
@@ -97,8 +80,8 @@ async function init() {
     }
 
     //==== 交互邏輯(調用interactions.js) ====
-    setupResizeListener(camera, renderer, sectionMeshes);
-    setupScrollListener(sectionMeshes);
+    setupResizeListener(camera, renderer);
+
     setupCursorListener();
     setupDOMInteractions(materials.material, materials.particlesMaterial);
 
@@ -107,8 +90,8 @@ async function init() {
       scene,
       camera,
       cameraGroup,
-      renderer,
-      sectionMeshes
+      renderer
+
       // dynamicClouds
     );
   }

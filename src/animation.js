@@ -7,11 +7,6 @@ import { OBJECT_DISTANCE } from './constants';
 const clock = new THREE.Clock();
 let previousTime = 0;
 
-let productModelsData = []; // 存儲加載的模型數據
-export function setProductModelsDataForAnime(data) {
-  productModelsData = data;
-}
-
 /**
  * (導出函數) 啟動並運行 Three.js 動畫循環
  * @param {THREE.Scene} scene - 需要渲染的場景
@@ -21,13 +16,7 @@ export function setProductModelsDataForAnime(data) {
  * @param {THREE.Mesh[]} sectionMeshes - 場景中的模型數組，用於持續旋轉動畫
  */
 
-export function startAnimation(
-  scene,
-  camera,
-  cameraGroup,
-  renderer,
-  sectionMeshes
-) {
+export function startAnimation(scene, camera, cameraGroup, renderer) {
   const tick = () => {
     // 時間計算
     const elapsedTime = clock.getElapsedTime();

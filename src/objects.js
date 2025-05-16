@@ -74,8 +74,8 @@ export async function loadProductModels() {
       placeholderId: 'section1',
       settings: {
         scale: [1.8, 1.8, 1.8],
-        positionX: 1,
-        positionY: 0.5,
+        positionX: 0,
+        positionY: 0,
       },
     },
     {
@@ -106,45 +106,6 @@ export async function loadProductModels() {
       },
     },
   ];
-
-  const loadedModelsData = [];
-  for (const config of modelConfig) {
-    try {
-      const gltf = await gltfLoaderInstance.loadAsync(config.path);
-      const model = gltf.scene;
-
-      if (config.settings.scale) {
-        model.position.set(0, config.settings.positionY || 0, 0);
-      }
-      if (config.settings.positionY) {
-        model.position.y = config.settings.positionY;
-      }
-      if (config.settings.positionX) {
-        model.position.x = config.settings.positionX;
-      }
-
-      //獲取placeholder元素
-      const sectionElement = document.getElementById(config.placeholderId);
-      const placeholderDiv = sectionElement
-        ? sectionElement.querySelector('.threejs-placeholder')
-        : null;
-
-      if (placeholderDiv) {
-        model.visible = false; // 隱藏模型
-        loadedModelsData.push({
-          model: model,
-          placeholderElement: placeholderDiv,
-          settings: config.settings,
-          isVisibleInViewport: false, // 新增標記
-        });
-      } else {
-        console.error(`錯誤：無法找到 ID 為 ${config.placeholderId} 的元素。`);
-      }
-    } catch (error) {
-      console.error(`加載模型${config.path}錯誤`, error);
-    }
-  }
-  return loadedModelsData;
 }
 
 // /**
