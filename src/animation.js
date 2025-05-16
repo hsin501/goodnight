@@ -7,6 +7,11 @@ import { OBJECT_DISTANCE } from './constants';
 const clock = new THREE.Clock();
 let previousTime = 0;
 
+let productModelsData = []; // 存儲加載的模型數據
+export function setProductModelsDataForAnime(data) {
+  productModelsData = data;
+}
+
 /**
  * (導出函數) 啟動並運行 Three.js 動畫循環
  * @param {THREE.Scene} scene - 需要渲染的場景
@@ -31,6 +36,9 @@ export function startAnimation(
 
     // 獲取實時滾動位置
     const scrollY = window.scrollY;
+
+    //獲取Three.js的canvas元素
+    const canvas = renderer.domElement;
 
     //相機動畫 - 垂直移動
     camera.position.y = (-scrollY / sizes.height) * OBJECT_DISTANCE;
@@ -102,6 +110,7 @@ export function startAnimation(
     //     cloud.lookAt(lookAtTarget);
     //   });
     // }
+
     // 渲染;
     renderer.render(scene, camera);
 

@@ -30,9 +30,7 @@ img {
   height: auto;
   aspect-ratio: 3 / 2; /* 寬高比 */
 }
-.app {
-  display: flex;
-}
+
 .webgl {
   position: fixed;
   top: 0;
@@ -49,7 +47,7 @@ img {
   height: 100vh;
   position: relative;
   font-family: 'Cabin', sans-serif;
-  padding: 0 15%; /* 增加左右內邊距，避免文字貼邊 */
+  padding: 0 10%; /* 增加左右內邊距，避免文字貼邊 */
   text-align: center; /* 手機板文字居中 */
   overflow: hidden;
 }
@@ -64,22 +62,42 @@ img {
 /* 產品區塊 (除了首頁介紹區) */
 .section:not(#section0) .product-visual,
 .section:not(#section0) .section-content {
-  flex: 1; /* 讓兩欄各佔一半空間 */
-  padding: 2rem; /* 內部間距 */
+  flex: 0 0 50%;
+  padding: 1rem;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center; /* 垂直居中各自欄位內的內容 */
-  min-height: 200px; /* 保持原有的最小高度 */
+  padding: 2rem 1.5rem;
+  flex-direction: column; /* 讓內容垂直排列 */
+  height: 100%;
 }
 
-.section:not(#section0) .section-content {
-  text-align: left; /* 產品文字描述靠左 */
+/* 產品視覺區塊內部調整 */
+.section:not(#section0) .product-visual {
+  align-items: center;
 }
+
+/* 文字內容區塊內部調整 */
+.section:not(#section0) .section-content {
+  align-items: flex-start; /* 文字內容預設靠左對齊 */
+  text-align: left;
+}
+
+/* 交錯佈局  */
+.section:nth-child(even) {
+  /* 視覺在左，內容在右 */
+  flex-direction: row;
+}
+.section:nth-child(odd):not(:first-child) {
+  /* 內容在左，視覺在右 */
+  flex-direction: row-reverse;
+}
+
 .threejs-placeholder {
-  width: 100%;
-  height: 700px; /* 示例高度，你可以根據模型調整 */
-  max-height: 70vh; /* 限制最大高度 */
-  background-color: rgba(255, 255, 255, 0.05); /* 淡淡的背景示意 */
+  width: 100%; /* 填滿 .product-visual 扣除 padding 後的可用寬度 */
+  max-width: 450px; /* 可以給一個最大寬度，避免過大 */
+  aspect-ratio: 4/5; /* 高瓶子形狀，或根據你的產品調整 */
+  background-color: rgba(255, 255, 255, 0.05);
   border: 1px dashed rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   display: flex;
@@ -88,35 +106,94 @@ img {
   color: #ccc;
   font-size: 0.9rem;
   text-align: center;
+  margin-bottom: 2rem; /* 圖片和下方按鈕組的間距 */
 }
 
-.section h1 {
+/* 產品操作按鈕容器 */
+.product-controls {
+  display: flex;
+  gap: 1rem; /* 按鈕之間的間距 */
+  justify-content: center;
+  width: 100%;
+  flex-wrap: wrap; /* 如果按鈕過多，允許換行 */
+  max-width: 400px;
+}
+.section-content h1 {
   color: #e4dbdb;
-  font-size: 8vmin;
+  font-size: clamp(2.5rem, 7vmin, 3.5rem);
   text-transform: uppercase;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   text-shadow: #090a14 0px 0px 20px;
+  width: 100%;
 }
 
-.section h2 {
+.section-content h2 {
   color: rgb(201, 201, 201);
-  font-size: 5vmin;
+  font-size: clamp(1.2rem, 4vmin, 1.8rem);
   text-transform: uppercase;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   text-shadow: #090a14 0px 0px 20px;
+  width: 100%;
 }
 
-.section p {
-  font-size: 1.2rem;
+/* 產品描述段落 */
+.product-description {
+  font-size: clamp(0.9rem, 2.4vmin, 1.05rem);
   font-weight: 300;
-  line-height: 1.8;
-  text-transform: none;
-  text-shadow: none;
-  margin-top: 2rem;
+  line-height: 1.7;
+  margin-top: 0;
+  margin-bottom: 1.5rem; /* 描述和價格之間的距離 */
+  max-width: 55ch; /* 限制文字寬度，提高可讀性 */
+  text-align: inherit;
 }
 
-section:nth-child(odd) {
-  justify-content: flex-end;
+/* 價格樣式 */
+.product-price {
+  font-size: clamp(1.2rem, 3.5vmin, 1.7rem);
+  color: #f0e6e6;
+  font-weight: 600;
+  margin: 0;
+  margin-top: 0; /* 清除預設 margin */
+  margin-bottom: 0; /* 價格下方不再有按鈕，所以底部間距為0 */
+  width: 100%;
+}
+
+/* CTA 按鈕樣式 */
+.cta-button {
+  display: inline-block;
+  background-color: rgba(128, 107, 107, 0.12);
+  color: #f0e6e6; /* 文字顏色更亮 */
+  border: 1.5px solid rgba(228, 219, 219, 0.4);
+  padding: 0.75rem 1.2rem;
+  font-size: clamp(0.9rem, 2.3vmin, 1.05rem);
+  font-weight: 600;
+  border-radius: 25px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  min-width: 130px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 0; /* 清除預設 margin */
+  margin-bottom: 0; /* 價格下方不再有按鈕，所以底部間距為0 */
+  /* flex-grow: 1; */
+}
+.cta-button.customize-btn {
+  white-space: normal; /* 如果想讓長文字換行 */
+  word-break: break-word;
+}
+
+.cta-button:hover {
+  background-color: rgba(228, 219, 219, 0.3);
+  color: #fff;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.cta-button:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 .glass-container {

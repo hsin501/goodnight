@@ -67,51 +67,84 @@ gltfLoaderInstance.setDRACOLoader(dracoLoaderInstance);
  * 異步加載產品模型
  * @returns {Promise<THREE.Group[]>} 一個 Promise，解析後為包含已加載和處理過的模型 (Group) 的數組
  */
-export async function loadProductModels(initaMaterial) {
-  const modelPath = [
-    'static/model/facewash.glb',
-    'static/model/bodywash.glb',
-    'static/model/cream.glb',
-    'static/model/waterspray.glb',
+export async function loadProductModels() {
+  const modelConfig = [
+    {
+      path: 'static/model/facewash.glb',
+      placeholderId: 'section1',
+      settings: {
+        scale: [1.8, 1.8, 1.8],
+        positionX: 1,
+        positionY: 0.5,
+      },
+    },
+    {
+      path: 'static/model/bodywash.glb',
+      placeholderId: 'section2',
+      settings: {
+        scale: [1.2, 1.2, 1.2],
+        positionX: -1,
+        positionY: 1.2,
+      },
+    },
+    {
+      path: 'static/model/cream.glb',
+      placeholderId: 'section3',
+      settings: {
+        scale: [1.2, 1.2, 1.2],
+        positionX: 1,
+        positionY: 0.6,
+      },
+    },
+    {
+      path: 'static/model/waterspray.glb',
+      placeholderId: 'section4',
+      settings: {
+        scale: [1.5, 1.5, 1.5],
+        positionX: -1,
+        positionY: 1,
+      },
+    },
   ];
-  const modelSettings = {
-    facewash: { scale: [1.8, 1.8, 1.8], positionX: 1, positionY: 0.5 },
-    bodywash: { scale: [1.2, 1.2, 1.2], positionX: -1, positionY: 1.2 },
-    cream: { scale: [1.2, 1.2, 1.2], positionX: 1, positionY: 0.6 },
-    waterspray: { scale: [1.5, 1.5, 1.5], positionX: -1, positionY: 1 },
-  };
-  const loadedModels = [];
-  try {
-    for (let i = 0; i < modelPath.length; i++) {
-      const path = modelPath[i];
-      const gltf = await gltfLoaderInstance.loadAsync(path);
+
+  const loadedModelsData = [];
+  for (const config of modelConfig) {
+    try {
+      const gltf = await gltfLoaderInstance.loadAsync(config.path);
       const model = gltf.scene;
 
-      // 取得模型設定
-      const defaultScale = [1, 1, 1];
-      const defaultPositionX = [0, 0, 0];
-      const settings = Object.keys(modelSettings).find((key) =>
-        path.includes(key)
-      )
-        ? modelSettings[
-            Object.keys(modelSettings).find((key) => path.includes(key))
-          ]
-        : { scale: defaultScale, positionX: defaultPositionX };
+      if (config.settings.scale) {
+        model.position.set(0, config.settings.positionY || 0, 0);
+      }
+      if (config.settings.positionY) {
+        model.position.y = config.settings.positionY;
+      }
+      if (config.settings.positionX) {
+        model.position.x = config.settings.positionX;
+      }
 
-      // 設置模型縮放
-      model.scale.set(...settings.scale);
-      //設置模型位置
-      model.position.y =
-        -OBJECT_DISTANCE * i - OBJECT_DISTANCE - settings.positionY;
-      model.position.x = settings.positionX;
-      loadedModels.push(model);
-      console.log(`模型 ${path} 已加載並處理`);
+      //獲取placeholder元素
+      const sectionElement = document.getElementById(config.placeholderId);
+      const placeholderDiv = sectionElement
+        ? sectionElement.querySelector('.threejs-placeholder')
+        : null;
+
+      if (placeholderDiv) {
+        model.visible = false; // 隱藏模型
+        loadedModelsData.push({
+          model: model,
+          placeholderElement: placeholderDiv,
+          settings: config.settings,
+          isVisibleInViewport: false, // 新增標記
+        });
+      } else {
+        console.error(`錯誤：無法找到 ID 為 ${config.placeholderId} 的元素。`);
+      }
+    } catch (error) {
+      console.error(`加載模型${config.path}錯誤`, error);
     }
-    return loadedModels;
-  } catch (error) {
-    console.error('加載模型錯誤', error);
-    return [];
   }
+  return loadedModelsData;
 }
 
 // /**
