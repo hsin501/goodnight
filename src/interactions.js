@@ -9,31 +9,31 @@ let currentSection = 0;
  * 設置滾動事件監聽器，觸發模型進入視圖時的動畫
  * @param {THREE.Mesh[]} sectionMeshes - 需要動畫的模型數組
  */
-// export function setupScrollListener(sectionMeshes) {
-//   if (!Array.isArray(sectionMeshes) || sectionMeshes.length === 0) return; // 確保 sectionMeshes 是有效的數組
+export function setupScrollListener(sectionMeshes) {
+  if (!Array.isArray(sectionMeshes) || sectionMeshes.length === 0) return; // 確保 sectionMeshes 是有效的數組
 
-//   window.addEventListener('scroll', () => {
-//     const scrollY = window.scrollY; // 獲取當前滾動位置
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY; // 獲取當前滾動位置
 
-//     //// 計算當前滾動到哪個區域
-//     const newSection = Math.round(scrollY / sizes.height);
-//     // console.log(newSection);
+    //// 計算當前滾動到哪個區域
+    const newSection = Math.round(scrollY / sizes.height);
+    // console.log(newSection);
 
-//     // 如果當前區域與新區域不同，則觸發動畫
-//     // if (newSection != currentSection) {
-//     //   currentSection = newSection;
-//     //   // console.log('change', currentSection);
-//     //   gsap.to(sectionMeshes[currentSection].rotation, {
-//     //     duration: 1.5,
-//     //     ease: 'power2.inOut',
-//     //     x: '+=6',
-//     //     y: '+=3',
-//     //     z: '+=1.5',
-//     //   });
-//     // }
-//   });
-//   console.log('滾動事件監聽器已設置');
-// }
+    // 如果當前區域與新區域不同，則觸發動畫
+    // if (newSection != currentSection) {
+    //   currentSection = newSection;
+    //   // console.log('change', currentSection);
+    //   gsap.to(sectionMeshes[currentSection].rotation, {
+    //     duration: 1.5,
+    //     ease: 'power2.inOut',
+    //     x: '+=6',
+    //     y: '+=3',
+    //     z: '+=1.5',
+    //   });
+    // }
+  });
+  console.log('滾動事件監聽器已設置');
+}
 
 /**
  * 設置鼠標移動事件監聽器，更新共享的 cursor 對象
@@ -46,18 +46,18 @@ export function setupCursorListener() {
   console.log('鼠標移動事件監聽器已設置');
 }
 
-// /**
-//  * 根據屏幕寬度更新模型位置 (響應式)
-//  * @param {THREE.Mesh[]} sectionMeshes - 需要調整位置的模型數組
-//  */
+/**
+ * 根據屏幕寬度更新模型位置 (響應式)
+ * @param {THREE.Mesh[]} sectionMeshes - 需要調整位置的模型數組
+ */
 
-// function updateMeshPositionsForResponsiveness(sectionMeshes) {
-//   if (!sectionMeshes || sectionMeshes.length < 3) return;
-//   const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
-//   sectionMeshes[0].position.x = isMobile ? 0 : 2;
-//   sectionMeshes[1].position.x = isMobile ? 0 : -2;
-//   sectionMeshes[2].position.x = isMobile ? 0 : 2;
-// }
+function updateMeshPositionsForResponsiveness(sectionMeshes) {
+  if (!sectionMeshes || sectionMeshes.length < 3) return;
+  const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+  sectionMeshes[0].position.x = isMobile ? 0 : 2;
+  sectionMeshes[1].position.x = isMobile ? 0 : -2;
+  sectionMeshes[2].position.x = isMobile ? 0 : 2;
+}
 
 /**
  * 設置窗口大小調整的監聽器，處理響應式佈局
@@ -66,7 +66,7 @@ export function setupCursorListener() {
  * @param {THREE.Mesh[]} sectionMeshes - 需要響應式調整的模型數組
  */
 
-export function setupResizeListener(camera, renderer) {
+export function setupResizeListener(camera, renderer, sectionMeshes) {
   window.addEventListener('resize', () => {
     // 更新共享的 sizes 對象
     sizes.width = window.innerWidth;
@@ -80,9 +80,9 @@ export function setupResizeListener(camera, renderer) {
     renderer.setSize(sizes.width, sizes.height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // // 調用函數更新模型位置
-    // updateMeshPositionsForResponsiveness(sectionMeshes);
-    // console.log('窗口尺寸已更新');
+    // 調用函數更新模型位置
+    updateMeshPositionsForResponsiveness(sectionMeshes);
+    console.log('窗口尺寸已更新');
   });
   updateMeshPositionsForResponsiveness();
   console.log('響應式監聽器已設置');

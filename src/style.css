@@ -9,11 +9,6 @@
   box-sizing: border-box;
 }
 
-/* html,
-body {
-	overflow: hidden;
-} */
-
 html {
   background: url(./static/cloudbg.png) no-repeat center/cover;
   scroll-behavior: smooth;
@@ -30,7 +25,9 @@ img {
   height: auto;
   aspect-ratio: 3 / 2; /* 寬高比 */
 }
-
+.app {
+  display: flex;
+}
 .webgl {
   position: fixed;
   top: 0;
@@ -47,56 +44,38 @@ img {
   height: 100vh;
   position: relative;
   font-family: 'Cabin', sans-serif;
-  padding: 0 10%; /* 增加左右內邊距，避免文字貼邊 */
-  text-align: center; /* 手機板文字居中 */
+  padding: 0 10%;
   overflow: hidden;
 }
 #section0 {
-  justify-content: center; /* 水平居中其內容 */
+  justify-content: center;
+  text-align: center;
 }
 #section0 .section-content {
-  text-align: center; /* 文字居中 */
-  max-width: 70ch; /* 限制文字寬度，提高可讀性 */
+  text-align: center;
+  max-width: 70ch;
 }
 
 /* 產品區塊 (除了首頁介紹區) */
 .section:not(#section0) .product-visual,
 .section:not(#section0) .section-content {
-  flex: 0 0 50%;
-  padding: 1rem;
+  flex-basis: 50%;
+  padding: 2rem;
   display: flex;
-  align-items: center;
-  justify-content: center; /* 垂直居中各自欄位內的內容 */
-  padding: 2rem 1.5rem;
-  flex-direction: column; /* 讓內容垂直排列 */
-  height: 100%;
-}
-
-/* 產品視覺區塊內部調整 */
-.section:not(#section0) .product-visual {
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
 
-/* 文字內容區塊內部調整 */
 .section:not(#section0) .section-content {
-  align-items: flex-start; /* 文字內容預設靠左對齊 */
-  text-align: left;
-}
-
-/* 交錯佈局  */
-.section:nth-child(even) {
-  /* 視覺在左，內容在右 */
-  flex-direction: row !important;
-}
-.section:nth-child(odd):not(:first-child) {
-  /* 內容在左，視覺在右 */
-  flex-direction: row-reverse !important;
+  text-align: left; /* 產品文字描述靠左 */
+  align-items: flex-start; /* 讓文字內容相對於這個50%的塊靠左 */
 }
 
 .threejs-placeholder {
-  width: 100%; /* 填滿 .product-visual 扣除 padding 後的可用寬度 */
-  max-width: 450px; /* 可以給一個最大寬度，避免過大 */
-  aspect-ratio: 4/5; /* 高瓶子形狀，或根據你的產品調整 */
+  width: 100%;
+  height: 700px;
+  max-height: 70vh;
   background-color: rgba(255, 255, 255, 0.05);
   border: 1px dashed rgba(255, 255, 255, 0.2);
   border-radius: 10px;
@@ -106,34 +85,23 @@ img {
   color: #ccc;
   font-size: 0.9rem;
   text-align: center;
-  margin-bottom: 2rem; /* 圖片和下方按鈕組的間距 */
+  margin-bottom: 5%;
 }
 
-/* 產品操作按鈕容器 */
-.product-controls {
-  display: flex;
-  gap: 1rem; /* 按鈕之間的間距 */
-  justify-content: center;
-  width: 100%;
-  flex-wrap: wrap; /* 如果按鈕過多，允許換行 */
-  max-width: 400px;
-}
-.section-content h1 {
+.section h1 {
   color: #e4dbdb;
-  font-size: clamp(2.5rem, 7vmin, 3.5rem);
+  font-size: 8vmin;
   text-transform: uppercase;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
   text-shadow: #090a14 0px 0px 20px;
-  width: 100%;
 }
 
-.section-content h2 {
+.section h2 {
   color: rgb(201, 201, 201);
-  font-size: clamp(1.2rem, 4vmin, 1.8rem);
+  font-size: 5vmin;
   text-transform: uppercase;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   text-shadow: #090a14 0px 0px 20px;
-  width: 100%;
 }
 
 /* 產品描述段落 */
@@ -142,8 +110,8 @@ img {
   font-weight: 300;
   line-height: 1.7;
   margin-top: 0;
-  margin-bottom: 1.5rem; /* 描述和價格之間的距離 */
-  max-width: 55ch; /* 限制文字寬度，提高可讀性 */
+  margin-bottom: 1.5rem;
+  max-width: 55ch;
   text-align: inherit;
 }
 
@@ -179,7 +147,7 @@ img {
   /* flex-grow: 1; */
 }
 .cta-button.customize-btn {
-  white-space: normal; /* 如果想讓長文字換行 */
+  white-space: normal;
   word-break: break-word;
 }
 
@@ -319,7 +287,6 @@ img {
   cursor: pointer;
   z-index: 102;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-
   backdrop-filter: blur(5px);
   background-color: rgba(165, 173, 192, 0.2);
   box-shadow: rgba(0, 0, 0, 0.3) 1px 4px 6px;

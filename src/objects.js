@@ -67,45 +67,51 @@ gltfLoaderInstance.setDRACOLoader(dracoLoaderInstance);
  * 異步加載產品模型
  * @returns {Promise<THREE.Group[]>} 一個 Promise，解析後為包含已加載和處理過的模型 (Group) 的數組
  */
-export async function loadProductModels() {
-  const modelConfig = [
-    {
-      path: 'static/model/facewash.glb',
-      placeholderId: 'section1',
-      settings: {
-        scale: [1.8, 1.8, 1.8],
-        positionX: 0,
-        positionY: 0,
-      },
-    },
-    {
-      path: 'static/model/bodywash.glb',
-      placeholderId: 'section2',
-      settings: {
-        scale: [1.2, 1.2, 1.2],
-        positionX: -1,
-        positionY: 1.2,
-      },
-    },
-    {
-      path: 'static/model/cream.glb',
-      placeholderId: 'section3',
-      settings: {
-        scale: [1.2, 1.2, 1.2],
-        positionX: 1,
-        positionY: 0.6,
-      },
-    },
-    {
-      path: 'static/model/waterspray.glb',
-      placeholderId: 'section4',
-      settings: {
-        scale: [1.5, 1.5, 1.5],
-        positionX: -1,
-        positionY: 1,
-      },
-    },
+export async function loadProductModels(initaMaterial) {
+  const modelPath = [
+    'static/model/facewash.glb',
+    'static/model/bodywash.glb',
+    'static/model/cream.glb',
+    'static/model/waterspray.glb',
   ];
+  const modelSettings = {
+    facewash: { scale: [1.9, 1.9, 1.9], positionX: -1.5, positionY: 0.3 },
+    bodywash: { scale: [1.1, 1.1, 1.1], positionX: 1.6, positionY: 0.9 },
+    cream: { scale: [1.2, 1.2, 1.2], positionX: 1, positionY: 0.6 },
+    waterspray: { scale: [1.5, 1.5, 1.5], positionX: -1, positionY: 1 },
+  };
+  const loadedModels = [];
+  try {
+    for (let i = 0; i < modelPath.length; i++) {
+      const path = modelPath[i];
+      const gltf = await gltfLoaderInstance.loadAsync(path);
+      const model = gltf.scene;
+
+      // 取得模型設定
+      const defaultScale = [1, 1, 1];
+      const defaultPositionX = [0, 0, 0];
+      const settings = Object.keys(modelSettings).find((key) =>
+        path.includes(key)
+      )
+        ? modelSettings[
+            Object.keys(modelSettings).find((key) => path.includes(key))
+          ]
+        : { scale: defaultScale, positionX: defaultPositionX };
+
+      // 設置模型縮放
+      model.scale.set(...settings.scale);
+      //設置模型位置
+      model.position.y =
+        -OBJECT_DISTANCE * i - OBJECT_DISTANCE - settings.positionY;
+      model.position.x = settings.positionX;
+      loadedModels.push(model);
+      console.log(`模型 ${path} 已加載並處理`);
+    }
+    return loadedModels;
+  } catch (error) {
+    console.error('加載模型錯誤', error);
+    return [];
+  }
 }
 
 // /**
