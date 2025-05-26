@@ -1,6 +1,7 @@
 import './style.css';
 // import * as GUI from 'lil-gui';
 import * as THREE from 'three';
+
 import {
   createScene,
   setupLights,
@@ -10,8 +11,6 @@ import {
 import {
   loadTextures,
   createMaterials,
-  // createMeshes,
-  // createCloudMeshes,
   loadProductModels,
   createCloud1,
 } from './objects.js';
@@ -22,7 +21,6 @@ import {
   setupDOMInteractions,
 } from './interactions.js';
 import { startAnimation } from './animation.js';
-import { OBJECT_DISTANCE } from './constants.js';
 
 //獲取Canvas元素
 const canvas = document.querySelector('canvas.webgl');
@@ -39,19 +37,17 @@ async function init() {
     const renderer = setupRenderer(canvas);
     setupLights(scene);
 
+    // ==== 產品模型容器 (新的 Group) ====
+    const productModelsContainer = new THREE.Group();
+    scene.add(productModelsContainer); // 將容器添加到場景
+
     //==== 對象創建(調用objects.js) ====
     const textures = loadTextures();
     const materials = createMaterials(textures);
-    // const sectionMeshes = createMeshes(materials.material);
-    // scene.add(...sectionMeshes);
 
     //==== 載入產品模型 ====
-    const productModelsArray = await loadProductModels(materials.material);
-    let sectionMeshes = [];
+    const productModelsArray = await loadProductModels(productModelsContainer);
     if (productModelsArray && productModelsArray.length > 0) {
-      scene.add(...productModelsArray);
-      sectionMeshes = productModelsArray;
-
       console.log('產品模型已加載');
     } else {
       console.log('產品模型加載失敗');
@@ -61,10 +57,10 @@ async function init() {
     const firstCloudConfig = [
       {
         position: new THREE.Vector3(-3, 0, -5),
-        width: 10, // 可以直接指定寬度
-        height: 5, // 和高度
-        opacity: 0.6, // 透明度
-        rotationY: Math.PI / 4, // 初始 Y 軸旋轉 (可選)
+        width: 10,
+        height: 5,
+        opacity: 0.6,
+        rotationY: Math.PI / 4,
         driftSpeedX: 0.002,
         driftSpeedZ: 0.0005,
         isInteractive: true,
@@ -96,8 +92,8 @@ async function init() {
     }
 
     //==== 交互邏輯(調用interactions.js) ====
-    setupResizeListener(camera, renderer, sectionMeshes);
-    setupScrollListener(sectionMeshes);
+    setupResizeListener(camera, renderer);
+    setupScrollListener();
     setupCursorListener();
     setupDOMInteractions(materials.material, materials.particlesMaterial);
 
@@ -107,8 +103,8 @@ async function init() {
       camera,
       cameraGroup,
       renderer,
-      sectionMeshes
-      // dynamicClouds
+      productModelsContainer, // 傳遞產品容器
+      interactiveClouds // 傳遞雲朵數組
     );
   }
   console.log('應用初始化完成！');

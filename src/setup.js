@@ -11,12 +11,12 @@ export function createScene() {
 
 export function setupLights(scene) {
   // 主光（模擬太陽）
-  const keyLight = new THREE.DirectionalLight(0xffffff, 1);
+  const keyLight = new THREE.DirectionalLight(0xfffde0, 0.8);
   keyLight.position.set(2, 4, 2);
   scene.add(keyLight);
 
   // 補光（減少陰影死角）
-  const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  const fillLight = new THREE.DirectionalLight(0xe0f0ff, 0.4);
   fillLight.position.set(-2, 2, 2);
   scene.add(fillLight);
 

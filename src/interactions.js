@@ -1,6 +1,7 @@
 import gsap from 'gsap';
 import { sizes } from './utils';
 import { MOBILE_BREAKPOINT } from './constants';
+import * as THREE from 'three';
 
 export const cursor = { x: 0, y: 0 };
 let currentSection = 0;
@@ -9,9 +10,7 @@ let currentSection = 0;
  * 設置滾動事件監聽器，觸發模型進入視圖時的動畫
  * @param {THREE.Mesh[]} sectionMeshes - 需要動畫的模型數組
  */
-export function setupScrollListener(sectionMeshes) {
-  if (!Array.isArray(sectionMeshes) || sectionMeshes.length === 0) return; // 確保 sectionMeshes 是有效的數組
-
+export function setupScrollListener() {
   window.addEventListener('scroll', () => {
     const scrollY = window.scrollY; // 獲取當前滾動位置
 
@@ -48,25 +47,23 @@ export function setupCursorListener() {
 
 /**
  * 根據屏幕寬度更新模型位置 (響應式)
- * @param {THREE.Mesh[]} sectionMeshes - 需要調整位置的模型數組
+ * @param {THREE.Mesh[]} productModelsContainer  - 需要調整位置的模型數組
  */
 
-function updateMeshPositionsForResponsiveness(sectionMeshes) {
-  if (!sectionMeshes || sectionMeshes.length < 3) return;
+function updateMeshPositionsForResponsiveness(productModelsContainer) {
+  if (!productModelsContainer) return;
   const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
-  sectionMeshes[0].position.x = isMobile ? 0 : 2;
-  sectionMeshes[1].position.x = isMobile ? 0 : -2;
-  sectionMeshes[2].position.x = isMobile ? 0 : 2;
+  productModelsContainer.position.x = isMobile ? 0 : someDefaultX;
 }
 
 /**
  * 設置窗口大小調整的監聽器，處理響應式佈局
  * @param {THREE.PerspectiveCamera} camera - 場景相機
  * @param {THREE.WebGLRenderer} renderer - WebGL 渲染器
- * @param {THREE.Mesh[]} sectionMeshes - 需要響應式調整的模型數組
+ * @param {THREE.Mesh[]} productModelsContainer - 需要響應式調整的模型數組
  */
 
-export function setupResizeListener(camera, renderer, sectionMeshes) {
+export function setupResizeListener(camera, renderer, productModelsContainer) {
   window.addEventListener('resize', () => {
     // 更新共享的 sizes 對象
     sizes.width = window.innerWidth;
@@ -81,10 +78,10 @@ export function setupResizeListener(camera, renderer, sectionMeshes) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     // 調用函數更新模型位置
-    updateMeshPositionsForResponsiveness(sectionMeshes);
+    updateMeshPositionsForResponsiveness(productModelsContainer);
     console.log('窗口尺寸已更新');
   });
-  updateMeshPositionsForResponsiveness();
+  updateMeshPositionsForResponsiveness(productModelsContainer);
   console.log('響應式監聽器已設置');
 }
 

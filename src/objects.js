@@ -65,9 +65,11 @@ gltfLoaderInstance.setDRACOLoader(dracoLoaderInstance);
 
 /**
  * 異步加載產品模型
+ * @param {THREE.MeshStandardMaterial} initaMaterial - 用於模型的共享材質
+ * @param {THREE.Group} targetContainer - 產品模型將被添加到的 Three.js Group
  * @returns {Promise<THREE.Group[]>} 一個 Promise，解析後為包含已加載和處理過的模型 (Group) 的數組
  */
-export async function loadProductModels(initaMaterial) {
+export async function loadProductModels(targetContainer) {
   const modelPath = [
     'static/model/facewash.glb',
     'static/model/bodywash.glb',
@@ -77,9 +79,10 @@ export async function loadProductModels(initaMaterial) {
   const modelSettings = {
     facewash: { scale: [1.9, 1.9, 1.9], positionX: -1.5, positionY: 0.3 },
     bodywash: { scale: [1.1, 1.1, 1.1], positionX: 1.6, positionY: 0.9 },
-    cream: { scale: [1.2, 1.2, 1.2], positionX: 1, positionY: 0.6 },
-    waterspray: { scale: [1.5, 1.5, 1.5], positionX: -1, positionY: 1 },
+    cream: { scale: [1.3, 1.3, 1.3], positionX: -1.5, positionY: 0.6 },
+    waterspray: { scale: [1.5, 1.5, 1.5], positionX: 1.5, positionY: 0.7 },
   };
+
   const loadedModels = [];
   try {
     for (let i = 0; i < modelPath.length; i++) {
@@ -104,6 +107,14 @@ export async function loadProductModels(initaMaterial) {
       model.position.y =
         -OBJECT_DISTANCE * i - OBJECT_DISTANCE - settings.positionY;
       model.position.x = settings.positionX;
+
+      model.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+      targetContainer.add(model); // 將模型添加到傳入的容器中
       loadedModels.push(model);
       console.log(`模型 ${path} 已加載並處理`);
     }
@@ -114,60 +125,10 @@ export async function loadProductModels(initaMaterial) {
   }
 }
 
-// /**
-//  * 創建雲朵
-//  * @param {THREE.Texture[]} cloudTextures - 包含多個雲朵紋理的數組
-//  * @returns {THREE.Mesh[]} 一個包含所有雲朵 Mesh 的數組
-//  */
-
-// export function createCloudMeshes(cloudTextures) {
-//   const clouds = [];
-//   for (let i = 0; i < NUM_CLOUDS; i++) {
-//     //隨機雲紋理
-//     const texture =
-//       cloudTextures[Math.floor(Math.random() * cloudTextures.length)];
-//     //隨機雲材質
-//     const cloudMaterial = new THREE.MeshBasicMaterial({
-//       map: texture,
-//       transparent: true,
-//       opacity: Math.random() * 0.5 + 0.05, // 隨機不透明度
-//       depthWrite: false, // 禁用深度寫入
-//       side: THREE.DoubleSide, // 雙面渲染
-//     });
-//     //隨機雲幾何體
-//     const planeSize = Math.random() * 5 + 3; // 隨機平面大小
-//     const planeWidth = planeSize;
-//     const planeHeight = planeSize * Math.random() * 0.5 + 1.2;
-//     const cloudGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
-//     const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
-//     //隨機雲位置
-//     cloudMesh.position.x = (Math.random() - 0.5) * CLOUD_SPREAD_X; // 隨機 x 軸位置
-//     cloudMesh.position.y =
-//       Math.random() * (CLOUD_SPREAD_Y_MAX - CLOUD_SPREAD_Y_MIN) +
-//       CLOUD_SPREAD_Y_MIN;
-//     cloudMesh.position.z = (Math.random() - 0.5) * CLOUD_SPREAD_Z; // 隨機 z 軸位置
-
-//     // 隨機雲旋轉
-//     cloudMesh.rotation.y = Math.random() * Math.PI * 2;
-
-//     //自訂義數據
-//     cloudMesh.userData.initialX = cloudMesh.position.x;
-//     cloudMesh.userData.initialY = cloudMesh.position.y;
-//     cloudMesh.userData.initialZ = cloudMesh.position.z;
-//     // 添加漂移速度
-//     cloudMesh.userData.driftSpeedX = (Math.random() - 0.5) * 0.008 + 0.001; // 示例值
-//     cloudMesh.userData.driftSpeedZ = (Math.random() - 0.5) * 0.003; // 示例值
-//     clouds.push(cloudMesh);
-//   }
-//   console.log('雲朵已加載');
-//   return clouds;
-// }
-
 /**
  * 根據提供的配置創建一個或多個具有特定屬性的雲朵 Mesh。
  * @param {THREE.Texture[]} allCloudTextures - 包含所有可用雲朵紋理的數組。
  * @param {Array<Object>} cloudConfigs - 包含每個雲朵配置的數組。
- *
  * @returns {THREE.Mesh[]} 一個包含所有創建的雲朵 Mesh 的數組。
  */
 
@@ -196,7 +157,6 @@ export function createCloud1(allCloudTextures, cloudConfigs) {
     });
 
     //雲幾何體
-
     const planeWidth = config.width;
     const planeHeight =
       config.height || planeWidth * (Math.random() * 0.2 + 0.9);
@@ -205,7 +165,6 @@ export function createCloud1(allCloudTextures, cloudConfigs) {
 
     //雲位置
     cloudMesh.position.copy(config.position);
-
     cloudMesh.rotation.y = config.rotationY || Math.random() * Math.PI * 2;
 
     //自訂義數據
