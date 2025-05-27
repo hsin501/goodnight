@@ -7,12 +7,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  user-select: none;
-  cursor: default;
 }
 
 html {
-  background: url(./static/cloudbg.png) no-repeat center/cover;
+  background: url(/static/cloudbg.png) no-repeat center/cover;
   scroll-behavior: smooth;
   /* 2c3e50  78909c*/
 }
@@ -37,7 +35,7 @@ img {
   outline: none;
   width: 100vw; /* 確保 canvas 填滿螢幕寬度 */
   height: 100vh; /* 確保 canvas 填滿螢幕高度 */
-  z-index: -1; /* 放在背景層 */
+  z-index: 1; /* 放在背景層 */
 }
 
 .section {
@@ -52,10 +50,37 @@ img {
 #section0 {
   justify-content: center;
   text-align: center;
+  position: relative;
 }
+.parallax-cloud {
+  position: absolute;
+  z-index: 0;
+  /* pointer-events: none; */
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+}
+
+#parallax-cloud1 {
+  width: 50%; /* 根據你的圖片調整大小 */
+  height: auto;
+  top: 30%; /* 調整初始位置 */
+  left: 0%; /* 調整初始位置 */
+  opacity: 0.5; /* 調整透明度 */
+}
+
+#parallax-cloud2 {
+  width: 50%; /* 根據你的圖片調整大小 */
+  height: auto;
+  top: 5%; /* 調整初始位置 */
+  right: 0%; /* 調整初始位置 */
+  opacity: 0.4; /* 調整透明度 */
+}
+
 #section0 .section-content {
   text-align: center;
   max-width: 70ch;
+  position: relative;
+  z-index: 1;
 }
 
 /* 產品區塊 (除了首頁介紹區) */
@@ -75,8 +100,9 @@ img {
 }
 
 .threejs-placeholder {
+  margin-top: 25%;
   width: 100%;
-  height: 700px;
+  height: 400px;
   max-height: 70vh;
   background-color: rgba(255, 255, 255, 0.05);
   border: 1px dashed rgba(255, 255, 255, 0.2);
@@ -88,6 +114,7 @@ img {
   font-size: 0.9rem;
   text-align: center;
   margin-bottom: 5%;
+  z-index: 999;
 }
 
 .section h1 {
@@ -272,82 +299,4 @@ img {
 
 .glass-container li:last-child.touch-hover a {
   border-radius: 0 50px 50px 0;
-}
-
-/* --- 觸發顏色面板按鈕樣式 --- */
-#toggleColorButton {
-  position: fixed;
-  bottom: 10%;
-  right: 3vmin;
-  width: 3.125rem; /* 50px */
-  border-radius: 50%;
-  border: 1px rgba(154, 153, 160, 0.4) solid;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 102;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  backdrop-filter: blur(5px);
-  background-color: rgba(165, 173, 192, 0.2);
-  box-shadow: rgba(0, 0, 0, 0.3) 1px 4px 6px;
-  border: 1px rgba(154, 153, 160, 0.4) solid;
-}
-
-#toggleColorButton:hover {
-  transform: scale(1.1);
-  box-shadow: rgba(0, 0, 0, 0.4) 0.125rem 0.375rem 0.625rem;
-}
-#toggleColorButton svg {
-  width: 2.2rem;
-  height: 2.2rem;
-  fill: #240a0a;
-}
-#toggleColorButton:hover svg {
-  fill: #d1c3c3;
-  transition: 0.3s ease;
-  transform: scale(1.2);
-}
-
-/* 顏色控制面板樣式 */
-.color-controls {
-  position: fixed;
-  bottom: calc(3vmin + 3.125rem + 1rem); /* 按鈕底部 + 按鈕高度 + 間距 */
-  right: 3vmin; /* 與按鈕右側對齊 */
-  transform: translateY(0.625rem);
-  width: fit-content;
-  padding: 0.9375rem 1.5625rem; /* 15px 25px */
-  display: flex;
-  flex-direction: column;
-  gap: 1.5625rem; /* 15px */
-  opacity: 0;
-  border-radius: 1.5625rem; /* 15px */
-  backdrop-filter: blur(4px);
-  background-color: rgba(165, 173, 192, 0.092);
-  box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
-  border: 2px rgba(154, 153, 160, 0.4) solid;
-  border-bottom: 2px rgba(40, 40, 40, 0.35) solid;
-  border-right: 2px rgba(40, 40, 40, 0.35) solid;
-  z-index: 101;
-}
-
-.color-controls.is-open {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-.control-item {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem; /* 10px */
-}
-
-.control-item label {
-  font-family: 'Cabin', sans-serif;
-  color: #ffffff;
-  font-size: 0.9rem;
-  font-weight: bold;
-  min-width: 4rem;
-  text-align: right;
 }
