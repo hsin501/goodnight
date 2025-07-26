@@ -6,6 +6,7 @@ import {
   initOrbitControls,
   controlModelBySection,
 } from './orbitControlsManager.js';
+import { RGBELoader } from 'three/examples/jsm/Addons.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   initParallaxClouds();
@@ -21,10 +22,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
+  const section1Placeholder = document.querySelector(
+    '#section1 .threejs-placeholder'
+  );
+
+  // 安全檢查，如果找不到 placeholder 就停止，防止後續出錯
+  if (!section1Placeholder) {
+    console.error(
+      '致命錯誤：找不到 section1 的 placeholder！控制器無法初始化。'
+    );
+    return;
+  }
+
+  //HDR環境貼圖
+  const rgbeLoader = new RGBELoader();
+  rgbeLoader.load(
+    './static/studio_small_08_2k.hdr',
+    (environmentMap) => {
+      environmentMap.mapping = THREE.EquirectangularReflectionMapping;
+      // 應用到場景背景和所有物體的反射上
+      threeInstance.scene.background = null;
+      threeInstance.scene.environment = environmentMap;
+      console.log('環境貼圖載入成功');
+    },
+    undefined,
+    (error) => {
+      console.error('環境貼圖載入失敗:', error);
+    }
+  );
+
   //初始化orbit
   const orbitControlsUpdater = initOrbitControls(
     threeInstance.camera,
-    threeInstance.canvas
+    section1Placeholder
   );
   if (orbitControlsUpdater) {
     addAnimationLoopCallback(orbitControlsUpdater);
@@ -46,6 +76,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       bottleMeshForSection1,
       labelMeshForSection1
     );
+    // models.section1.visible = true;
+    threeInstance.camera.position.set(0, 0, 5);
     console.log('S1已載入');
   } catch (error) {
     console.error('S1載入失敗');
@@ -54,15 +86,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   // --- 滾動監測 (Intersection Observer) ---
   const sectionDiv = document.getElementById('section1');
   console.log('Section 1 Div:', sectionDiv);
-  if (sectionDiv && models.section1 && models.section1.modelScene) {
-    controlModelBySection(sectionDiv, models.section1.modelScene);
+  if (sectionDiv && models.section1) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          controlModelBySection(
+            sectionDiv,
+            models.section1,
+            entry.isIntersecting
+          );
+        });
+      },
+      {
+        threshold: 0.1, // 當元素至少%可見時觸發
+      }
+    );
+    observer.observe(sectionDiv);
   } else {
-    controlModelBySection(null, null);
-    if (!sectionDiv) {
-      console.warn('找不到 Section: section1');
-    }
-    if (!models.section1.modelScene) {
-      console.warn('Section 1 模型數據已載入，但 modelScene 無效。');
-    }
+    console.log('無法找到Section 1或模型場景');
   }
 });

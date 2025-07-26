@@ -35,7 +35,8 @@ img {
   outline: none;
   width: 100vw; /* 確保 canvas 填滿螢幕寬度 */
   height: 100vh; /* 確保 canvas 填滿螢幕高度 */
-  z-index: 1; /* 放在背景層 */
+  z-index: 1;
+  pointer-events: none;
 }
 
 .section {
@@ -115,8 +116,59 @@ img {
   text-align: center;
   margin-bottom: 5%;
   z-index: 999;
+  pointer-events: auto;
+  cursor: grab;
+}
+.threejs-placeholder:active {
+  cursor: grabbing; /* 當按下滑鼠左鍵時，變成握住的手 */
 }
 
+.three-interaction-hint {
+  position: absolute;
+  bottom: 25%;
+  left: 14%;
+  padding: 10px 15px;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px); /* 毛玻璃效果，跟你的網站風格很搭 */
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease-in-out;
+
+  /* 確保提示框本身不會攔截滑鼠事件 */
+  pointer-events: none;
+}
+
+.threejs-placeholder:hover .three-interaction-hint {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.three-interaction-hint p {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.three-interaction-hint .icon {
+  margin-right: 10px;
+  margin-bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+}
+.three-interaction-hint .icon svg {
+  width: 2em;
+  height: 2em;
+  fill: #ffffff;
+  stroke: #ffffff;
+  transition: transform 0.2s ease;
+}
 .section h1 {
   color: #e4dbdb;
   font-size: 8vmin;

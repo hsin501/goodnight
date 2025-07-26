@@ -1,25 +1,26 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-let controls; // OrbitControls 實例
-let mainCamera; // 對 sceneSetup 中主相機的引用
-let canvasElement; // 對渲染器 DOM 元素的引用 (canvas)
-let currentModelToControl; // 當前在 placeholder 中顯示的模型場
-let currentPlaceholderDiv; // 當前活動的 .threejs-placeholder 元素
+let controls;
 
-//初始化
-export function initOrbitControls(camerFromScene, canvasFromScene) {
-  mainCamera = camerFromScene;
-  canvasElement = canvasFromScene;
-
-  controls = new OrbitControls(mainCamera, canvasElement);
+// 這是初始化函數，負責建立控制器和設定每一幀的更新邏輯
+export function initOrbitControls(camera, canvas) {
+  controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.dampingFactor = 0.1;
   controls.enabled = false;
-  console.log('OrbitControls初始化成功');
+  // 設定縮放的最近和最遠距離
+  controls.minDistance = 3; // 可以根據你的模型大小微調
+  controls.maxDistance = 8; // 可以根據你的模型大小微調
+  controls.enableZoom = true; // 禁用縮放
+  controls.enablePan = true; // 禁用平移
 
+  console.log('OrbitControls初始化成功，並已設定縮放範圍。');
+
+  // 這個 update 函數會被加到主動畫循環中，每一幀都會執行
   return {
     update: function () {
+      // 如果遙控器是啟用的，就更新它
       if (controls.enabled) {
         controls.update();
       }
@@ -27,77 +28,15 @@ export function initOrbitControls(camerFromScene, canvasFromScene) {
   };
 }
 
-export function controlModelBySection(sectionDiv, modelToShow) {
-  console.log('controlModelBySection called with:', sectionDiv, modelToShow);
-  //先把上一個模型的顯示關掉
-  if (currentModelToControl && currentModelToControl !== modelToShow) {
-    currentModelToControl.visible = false;
-  }
-  if (currentPlaceholderDiv) {
-    mainCamera.clearViewOffset();
-    if (canvasElement) {
-      mainCamera.aspect =
-        canvasElement.clientWidth / canvasElement.clientHeight;
-      mainCamera.updateProjectionMatrix();
-      console.log('Cleared view offset, reset camera aspect.');
-    }
-  }
-  controls.enabled = false;
-  currentModelToControl = null;
-  currentPlaceholderDiv = null;
-
-  if (sectionDiv && modelToShow) {
-    const placeholder = sectionDiv.querySelector('.threejs-placeholder');
-    console.log('Found placeholder in section:', sectionDiv.id, placeholder); // <--- 打印 placeholder
-    if (placeholder) {
-      currentPlaceholderDiv = placeholder;
-      currentModelToControl = modelToShow;
-      currentModelToControl.visible = true;
-      console.log('TEMPORARY: Model forced visible:', currentModelToControl);
-      controls.enabled = true;
-      controls.target.set(0, 0.5, 0);
-
-      if (canvasElement) {
-        // 確保相機看整個畫布
-        mainCamera.aspect =
-          canvasElement.clientWidth / canvasElement.clientHeight;
-      }
-      mainCamera.updateProjectionMatrix();
-      controls.update();
-      console.log(
-        `TEMPORARY: Controls enabled for WHOLE screen, targeting origin.`
-      );
-
-      // 獲取 placeholder 在螢幕上的位置和大小
-      const rect = placeholder.getBoundingClientRect();
-      mainCamera.setViewOffset(
-        canvasElement.clientWidth,
-        canvasElement.clientHeight,
-        rect.left,
-        rect.top,
-        rect.width,
-        rect.height
-      );
-      // console.log('Placeholder Rect:', rect);
-      // 更新相機的長寬比，讓它匹配框框的長寬比，這樣模型才不會變形
-      mainCamera.aspect = rect.width / rect.height;
-      mainCamera.updateProjectionMatrix();
-
-      // 設定遙控器的「目標點」(相機圍繞哪個點轉)
-      controls.target.set(
-        modelToShow.position.x,
-        modelToShow.position.y + 0.5,
-        modelToShow.position.z
-      );
-      controls.update();
-      console.log(`遙控器現在控制 Section: ${sectionDiv.id} 中的模型`);
-    } else {
-      console.warn(
-        `找不到 Section: ${sectionDiv.id} 中的 .threejs-placeholder 元素`
-      );
-    }
+// 這個函數現在只負責「切換狀態」，不再做任何設定
+export function controlModelBySection(sectionDiv, modelToShow, isVisible) {
+  modelToShow.modelScene.visible = isVisible;
+  controls.enabled = isVisible;
+  if (isVisible) {
+    console.log(`進入 Section: ${sectionDiv.id}，已啟用模型和控制器。`);
+    // 你仍然可以在這裡設定目標點
+    controls.target.set(-0.5, 0.5, 0);
   } else {
-    console.log('沒有指定 section 或模型，遙控器已關閉，並清除特殊視圖。');
-    if (modelToShow) modelToShow.visible = false;
+    console.log(`離開 Section: ${sectionDiv.id}，已禁用模型和控制器。`);
   }
 }

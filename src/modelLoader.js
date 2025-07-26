@@ -30,19 +30,37 @@ export function loadMyModel(
         // 獲取模型場景
         loadedModelData.modelScene = gltf.scene;
         //設定模型的初始大小和位置
-        loadedModelData.modelScene.scale.set(1, 1, 1);
-        loadedModelData.modelScene.position.set(-1, -0.3, 0);
+        loadedModelData.modelScene.scale.set(2.2, 2.2, 2.2);
+        loadedModelData.modelScene.position.set(-0.5, -1, 0);
         loadedModelData.modelScene.visible = false;
 
         // 遍歷模型中的所有子物件，找到我們需要的「瓶子」和「標籤」
         loadedModelData.modelScene.traverse((child) => {
           if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+
+            console.log(
+              'Mesh:',
+              child.name,
+              'world pos:',
+              child.getWorldPosition(new THREE.Vector3())
+            );
+
             if (child.name === bottleName) {
               loadedModelData.bottleMesh = child;
               console.log('找到瓶子:', child.name);
 
               //為了能改變顏色 複製一份材質 並設定初始顏色
               if (child.material) {
+                const newMaterial = child.material.clone();
+                newMaterial.color.set(new THREE.Color(initColorHex));
+                newMaterial.roughness = 0.35;
+                newMaterial.metalness = 0.0;
+                newMaterial.clearcoat = 0.8;
+                newMaterial.clearcoatRoughness = 0.2;
+                loadedModelData.bottleMesh.material = newMaterial;
+
                 console.log(
                   `瓶子網格 "${child.name}" 發現原始材質:`,
                   child.material
@@ -63,6 +81,10 @@ export function loadMyModel(
             } else if (labelName && child.name === labelName) {
               loadedModelData.labelMesh = child;
               console.log('找到標籤:', child.name);
+              if (child.material) {
+                child.material = child.material.clone();
+                child.material.roughness = 0.05;
+              }
             }
           }
         });
@@ -72,6 +94,7 @@ export function loadMyModel(
           );
         }
         scene.add(loadedModelData.modelScene);
+        console.log('模型已加入 scene', loadedModelData.modelScene);
         resolve(loadedModelData); // 告訴主程式模型載入好了，並把模型資訊傳回去
       },
       (xhr) => {
