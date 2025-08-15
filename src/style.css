@@ -3,10 +3,362 @@
   src: url('custom-font.woff2') format('woff2');
   font-display: swap;
 }
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* From Uiverse.io by StealthWorm */
+.loader {
+  display: flex;
+  width: 8rem;
+  height: 8rem;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-direction: column;
+}
+
+.curve {
+  width: 180%;
+  height: 180%;
+  position: absolute;
+  animation: rotate 8s linear infinite;
+  fill: transparent;
+}
+
+.curve text {
+  letter-spacing: 20px;
+  text-transform: uppercase;
+  font: 1.5em 'Fira Sans', sans-serif;
+  fill: white;
+  filter: drop-shadow(0 2px 8px black);
+}
+
+.blackhole {
+  z-index: -1;
+  display: flex;
+  position: absolute;
+  width: 8rem;
+  height: 8rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.blackhole-circle {
+  z-index: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    black 25%,
+    white 35%,
+    white 100%
+  );
+  box-shadow: 0px 0px 2rem #c2babb;
+  align-items: center;
+  justify-content: center;
+}
+
+.blackhole-circle::after {
+  z-index: 0;
+  position: absolute;
+  content: '';
+  display: flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid white;
+  background: radial-gradient(
+    circle at center,
+    black 35%,
+    white 60%,
+    white 100%
+  );
+  box-shadow: 0px 0px 5rem #c2babb;
+  align-items: center;
+  justify-content: center;
+  filter: blur(4px);
+  animation: pulseAnimation linear infinite 2s alternate-reverse;
+}
+
+.blackhole-circle::before {
+  z-index: 1;
+  content: '';
+  display: flex;
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid #ffffff;
+  box-shadow: 3px 3px 10px #c2babb, inset 0 0 1rem #ffffff;
+  border-radius: 50%;
+  top: 5rem;
+  filter: blur(0.5px);
+  animation: rotate linear infinite 3s;
+}
+
+.blackhole-disc {
+  position: absolute;
+  z-index: 0;
+  display: flex;
+  width: 5rem;
+  height: 10rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    #ffffff 80%,
+    #353535 90%,
+    white 100%
+  );
+  filter: blur(1rem) brightness(130%);
+  border: 1rem solid white;
+  box-shadow: 0px 0px 3rem #d7c4be;
+  transform: rotate3d(1, 1, 1, 220deg);
+  animation: pulseAnimation2 linear infinite 2s alternate-reverse;
+  justify-content: center;
+  align-items: center;
+}
+
+.blackhole-disc::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  display: flex;
+  width: 5rem;
+  height: 10rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    #ffffff 80%,
+    #353535 90%,
+    white 100%
+  );
+  filter: blur(3rem);
+  border: 1rem solid white;
+  box-shadow: 0px 0px 6rem #d7c4be;
+  animation: pulseAnimation linear infinite 2s alternate-reverse;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseAnimation {
+  0% {
+    box-shadow: 0px 0px 3rem #c2babb;
+    transform: scale(1);
+  }
+
+  100% {
+    box-shadow: 0px 0px 5rem #c2babb;
+    transform: scale(1.09);
+  }
+}
+
+@keyframes pulseAnimation2 {
+  0% {
+    box-shadow: 0px 0px 3rem #c2babb;
+    transform: rotate3d(1, 1, 1, 220deg) scale(1);
+  }
+
+  100% {
+    box-shadow: 0px 0px 5rem #c2babb;
+    transform: rotate3d(1, 1, 1, 220deg) scale(0.95);
+  }
+}
+/* ---- Loading Animation ---- */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #090a14;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  opacity: 1;
+  visibility: visible;
+}
+
+.loading-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* New Blackhole Animation CSS */
+.loader {
+  display: flex;
+  width: 8rem;
+  height: 8rem;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-direction: column;
+}
+
+.curve {
+  width: 180%;
+  height: 180%;
+  position: absolute;
+  animation: rotate 8s linear infinite;
+  fill: transparent;
+}
+
+.curve text {
+  letter-spacing: 20px;
+  text-transform: uppercase;
+  font: 1.5em 'Fira Sans', sans-serif;
+  fill: white;
+  filter: drop-shadow(0 2px 8px black);
+}
+
+.blackhole {
+  z-index: -1;
+  display: flex;
+  position: absolute;
+  width: 8rem;
+  height: 8rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.blackhole-circle {
+  z-index: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    black 25%,
+    white 35%,
+    white 100%
+  );
+  box-shadow: 0px 0px 2rem #c2babb;
+  align-items: center;
+  justify-content: center;
+}
+
+.blackhole-circle::after {
+  z-index: 0;
+  position: absolute;
+  content: '';
+  display: flex;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid white;
+  background: radial-gradient(
+    circle at center,
+    black 35%,
+    white 60%,
+    white 100%
+  );
+  box-shadow: 0px 0px 5rem #c2babb;
+  align-items: center;
+  justify-content: center;
+  filter: blur(4px);
+  animation: pulseAnimation linear infinite 2s alternate-reverse;
+}
+
+.blackhole-circle::before {
+  z-index: 1;
+  content: '';
+  display: flex;
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid #ffffff;
+  box-shadow: 3px 3px 10px #c2babb, inset 0 0 1rem #ffffff;
+  border-radius: 50%;
+  /* top: 5rem; This was causing positioning issues */
+  filter: blur(0.5px);
+  animation: rotate linear infinite 3s;
+}
+
+.blackhole-disc {
+  position: absolute;
+  z-index: 0;
+  display: flex;
+  width: 5rem;
+  height: 10rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    #ffffff 80%,
+    #353535 90%,
+    white 100%
+  );
+  filter: blur(1rem) brightness(130%);
+  border: 1rem solid white;
+  box-shadow: 0px 0px 3rem #d7c4be;
+  transform: rotate3d(1, 1, 1, 220deg);
+  animation: pulseAnimation2 linear infinite 2s alternate-reverse;
+  justify-content: center;
+  align-items: center;
+}
+
+.blackhole-disc::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  display: flex;
+  width: 5rem;
+  height: 10rem;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    #ffffff 80%,
+    #353535 90%,
+    white 100%
+  );
+  filter: blur(3rem);
+  border: 1rem solid white;
+  box-shadow: 0px 0px 6rem #d7c4be;
+  animation: pulseAnimation linear infinite 2s alternate-reverse;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseAnimation {
+  0% {
+    box-shadow: 0px 0px 3rem #c2babb;
+    transform: scale(1);
+  }
+  100% {
+    box-shadow: 0px 0px 5rem #c2babb;
+    transform: scale(1.09);
+  }
+}
+
+@keyframes pulseAnimation2 {
+  0% {
+    box-shadow: 0px 0px 3rem #c2babb;
+    transform: rotate3d(1, 1, 1, 220deg) scale(1);
+  }
+  100% {
+    box-shadow: 0px 0px 5rem #c2babb;
+    transform: rotate3d(1, 1, 1, 220deg) scale(0.95);
+  }
 }
 
 html {
@@ -20,6 +372,13 @@ body {
   color: #ffffff;
   overflow-x: hidden; /* 防止橫向滾動 */
 }
+
+body,
+a,
+button {
+  cursor: none;
+}
+
 img {
   width: 100%;
   height: auto;
@@ -47,12 +406,15 @@ img {
   font-family: 'Cabin', sans-serif;
   padding: 0 10%;
   overflow: hidden;
+  background-color: transparent;
 }
 #section0 {
   justify-content: center;
   text-align: center;
   position: relative;
 }
+
+/* ----- 雲視差 ----- */
 .parallax-cloud {
   position: absolute;
   z-index: 0;
@@ -62,19 +424,19 @@ img {
 }
 
 #parallax-cloud1 {
-  width: 50%; /* 根據你的圖片調整大小 */
+  width: 50%;
   height: auto;
-  top: 30%; /* 調整初始位置 */
-  left: 0%; /* 調整初始位置 */
-  opacity: 0.5; /* 調整透明度 */
+  top: 30%;
+  left: 0%;
+  opacity: 0.5;
 }
 
 #parallax-cloud2 {
-  width: 50%; /* 根據你的圖片調整大小 */
+  width: 50%;
   height: auto;
-  top: 5%; /* 調整初始位置 */
-  right: 0%; /* 調整初始位置 */
-  opacity: 0.4; /* 調整透明度 */
+  top: 5%;
+  right: 0%;
+  opacity: 0.4;
 }
 
 #section0 .section-content {
@@ -82,6 +444,34 @@ img {
   max-width: 70ch;
   position: relative;
   z-index: 1;
+}
+
+/* ----- 星星視差背景 ----- */
+#stars-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* 讓它在 section0 的背景之下，但在 html 的背景之上 */
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+#stars1,
+#stars2,
+#stars3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 500vh;
+  will-change: transform;
+  opacity: 0.7;
+}
+.star {
+  position: absolute;
+  background-size: cover;
 }
 
 /* 產品區塊 (除了首頁介紹區) */
@@ -96,14 +486,14 @@ img {
 }
 
 .section:not(#section0) .section-content {
-  text-align: left; /* 產品文字描述靠左 */
-  align-items: flex-start; /* 讓文字內容相對於這個50%的塊靠左 */
+  text-align: center; /* 產品文字描述靠左 */
+  align-items: flex;
 }
 
 .threejs-placeholder {
   margin-top: 25%;
-  width: 100%;
-  height: 400px;
+  width: 80%;
+  height: 700px;
   max-height: 70vh;
   background-color: rgba(255, 255, 255, 0.05);
   border: 1px dashed rgba(255, 255, 255, 0.2);
@@ -114,7 +504,7 @@ img {
   color: #ccc;
   font-size: 0.9rem;
   text-align: center;
-  margin-bottom: 5%;
+  margin-bottom: 2%;
   z-index: 999;
   pointer-events: auto;
   cursor: grab;
@@ -125,11 +515,11 @@ img {
 
 .three-interaction-hint {
   position: absolute;
-  bottom: 25%;
-  left: 14%;
+  bottom: 6.6%;
+  left: 15.6%;
   padding: 10px 15px;
   background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(5px); /* 毛玻璃效果，跟你的網站風格很搭 */
+  backdrop-filter: blur(5px);
   border-radius: 8px;
   color: #ffffff;
   font-size: 0.85rem;
@@ -138,9 +528,14 @@ img {
   visibility: hidden;
   transform: translateY(10px);
   transition: all 0.3s ease-in-out;
-
   /* 確保提示框本身不會攔截滑鼠事件 */
   pointer-events: none;
+}
+#section2 .three-interaction-hint,
+#section4 .three-interaction-hint {
+  left: auto;
+  right: 15.6%;
+  text-align: right;
 }
 
 .threejs-placeholder:hover .three-interaction-hint {
@@ -170,19 +565,23 @@ img {
   transition: transform 0.2s ease;
 }
 .section h1 {
-  color: #e4dbdb;
   font-size: 8vmin;
   text-transform: uppercase;
-  margin-bottom: 1rem;
-  text-shadow: #090a14 0px 0px 20px;
+  margin-bottom: 0.2rem;
+  color: #ecd8b0;
+  text-shadow: 0 0 8px rgba(247, 232, 201, 0.5),
+    /* 第 2 層：主要的、向外擴散的柔和紫色輝光 */
+      /* 這是效果的核心，我們給了它很大的模糊半徑 */ 0 0 35px
+      rgba(218, 203, 227, 0.7);
 }
 
 .section h2 {
-  color: rgb(201, 201, 201);
-  font-size: 5vmin;
+  color: ffffff;
+  font-size: 4vmin;
   text-transform: uppercase;
-  margin-bottom: 1rem;
+  margin-bottom: 3rem;
   text-shadow: #090a14 0px 0px 20px;
+  font-weight: 300;
 }
 
 /* 產品描述段落 */
@@ -191,7 +590,7 @@ img {
   font-weight: 300;
   line-height: 1.7;
   margin-top: 0;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   max-width: 55ch;
   text-align: inherit;
 }
@@ -200,99 +599,235 @@ img {
 .product-price {
   font-size: clamp(1.2rem, 3.5vmin, 1.7rem);
   color: #f0e6e6;
-  font-weight: 600;
-  margin: 0;
-  margin-top: 0; /* 清除預設 margin */
-  margin-bottom: 0; /* 價格下方不再有按鈕，所以底部間距為0 */
+  font-weight: 500;
+  margin: 0 0 2rem 0;
   width: 100%;
 }
 
-/* CTA 按鈕樣式 */
+/*按鈕樣式 */
 .cta-button {
   display: inline-block;
-  background-color: rgba(128, 107, 107, 0.12);
+  background-color: transparent;
   color: #f0e6e6; /* 文字顏色更亮 */
   border: 1.5px solid rgba(228, 219, 219, 0.4);
-  padding: 0.75rem 1.2rem;
-  font-size: clamp(0.9rem, 2.3vmin, 1.05rem);
-  font-weight: 600;
-  border-radius: 25px;
+  padding: 1rem 1.5rem;
+  font-size: clamp(0.75rem, 2vmin, 0.95rem);
+  font-weight: 500;
+  border-radius: 100px;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: center;
-  min-width: 130px;
+  min-width: 140px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin-top: 0; /* 清除預設 margin */
-  margin-bottom: 0; /* 價格下方不再有按鈕，所以底部間距為0 */
+  margin: 0 10px;
+  line-height: 1.4;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   /* flex-grow: 1; */
-}
-.cta-button.customize-btn {
-  white-space: normal;
-  word-break: break-word;
 }
 
 .cta-button:hover {
-  background-color: rgba(228, 219, 219, 0.3);
-  color: #fff;
+  background-color: #f0e6e6;
+  color: #2a2d50; /* 使用一個深色，形成對比 */
+  border-color: #f0e6e6;
   transform: translateY(-3px) scale(1.02);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .cta-button:active {
   transform: translateY(-1px) scale(0.98);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
+/* ---- Sparkle Button ---- */
+.btn-sparkle {
+  position: relative;
+  /* 覆蓋原有的 padding 和 font-size，以符合新設計 */
+  padding: 1rem 1.5rem;
+  font-size: clamp(0.75rem, 2vmin, 0.95rem); /* 維持與您網站一致的字體大小 */
+  font-weight: 500;
+  line-height: 1.4; /* 確保換行文字的行高 */
+  background: #f0e6e6;
+  color: #2a2d50;
+  box-shadow: 0px 0px 10px 0px rgb(255, 255, 255);
+  border: none;
+  /* 覆蓋圓角，使其更圓潤 */
+  border-radius: 100px;
+}
 
+.btn-sparkle .star-1,
+.btn-sparkle .star-2,
+.btn-sparkle .star-3,
+.btn-sparkle .star-4,
+.btn-sparkle .star-5,
+.btn-sparkle .star-6 {
+  position: absolute;
+  filter: drop-shadow(0 0 0 #fffdef);
+  z-index: -1;
+  transition: all 0.8s cubic-bezier(0.05, 0.83, 0.43, 0.96);
+  pointer-events: none;
+}
+
+.btn-sparkle .star-1 {
+  top: 20%;
+  left: 20%;
+  width: 25px;
+  height: auto;
+}
+
+.btn-sparkle .star-2 {
+  top: 45%;
+  left: 45%;
+  width: 15px;
+  height: auto;
+  transition-delay: 0.1s;
+}
+
+.btn-sparkle .star-3 {
+  top: 40%;
+  left: 40%;
+  width: 5px;
+  height: auto;
+  transition-delay: 0.2s;
+}
+
+.btn-sparkle .star-4 {
+  top: 20%;
+  left: 40%;
+  width: 8px;
+  height: auto;
+}
+
+.btn-sparkle .star-5 {
+  top: 25%;
+  left: 45%;
+  width: 15px;
+  height: auto;
+  transition-delay: 0.3s;
+}
+
+.btn-sparkle .star-6 {
+  top: 5%;
+  left: 50%;
+  width: 5px;
+  height: auto;
+  transition-delay: 0.15s;
+}
+
+.btn-sparkle:hover {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 50px #ffffff8c;
+  transform: translateY(0) scale(1);
+  border-color: transparent;
+}
+
+.btn-sparkle:hover .star-1 {
+  top: -20%;
+  left: -20%;
+  width: 20px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+
+.btn-sparkle:hover .star-2 {
+  top: 35%;
+  left: -25%;
+  width: 15px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+
+.btn-sparkle:hover .star-3 {
+  top: 80%;
+  left: -10%;
+  width: 10px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+
+.btn-sparkle:hover .star-4 {
+  top: -25%;
+  left: 105%;
+  width: 20px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+
+.btn-sparkle:hover .star-5 {
+  top: 30%;
+  left: 115%;
+  width: 15px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+
+.btn-sparkle:hover .star-6 {
+  top: 80%;
+  left: 105%;
+  width: 10px;
+  filter: drop-shadow(0 0 10px #fffdef);
+  z-index: 2;
+}
+
+/* SVG 星星的顏色 */
+.fil0 {
+  fill: #fffdef;
+}
+/*navbar*/
 .glass-container {
   position: fixed;
   left: 50%;
+  top: 1.5rem;
   transform: translateX(-50%);
-  width: 100%;
-  height: 4.16rem;
+  width: 90%;
+  max-width: 1200px;
+  height: 4.5rem;
   color: white;
   display: flex;
   gap: 1.25rem;
-  z-index: 100;
+  align-items: center;
+  z-index: 1000;
   backdrop-filter: blur(4px);
-  background-color: rgba(165, 173, 192, 0.092);
+  background-color: rgba(30, 35, 50, 0.25);
+  -webkit-backdrop-filter: blur(12px);
   box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px;
-  border: 2px rgba(154, 153, 160, 0.4) solid;
+  border: 1px rgba(154, 153, 160, 0.1) solid;
   border-bottom: 2px rgba(40, 40, 40, 0.35) solid;
   border-right: 2px rgba(40, 40, 40, 0.35) solid;
+  border-radius: 50px;
 }
 
 .glass-container ul {
   display: flex;
   list-style: none;
-  gap: 0;
-  flex: 1;
+  padding: 0 1rem;
+  /* flex: 1; */
   align-items: center;
   justify-content: space-around;
-  margin-left: 10%;
-  margin-right: 10%;
+  /* margin-left: 10%;
+  margin-right: 10%; */
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 
 .glass-container li {
   flex: 1;
   position: relative;
-  padding: 1.2rem 0;
-  transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
+  text-align: center;
 }
 
 .glass-container li a {
   display: block;
   text-decoration: none;
   font-family: 'Cabin', sans-serif;
-  font-size: clamp(1rem, 3vw, 1.2rem);
-  font-weight: bold;
-  color: #ffffff;
-  text-align: center;
-  cursor: pointer;
-  padding: inherit;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.8rem 1.2rem;
+  border-radius: 25px;
   -webkit-tap-highlight-color: transparent; /* 移除點擊高亮 */
-  transition: background 0.3s ease;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 @media (hover: hover) {
   .glass-container li:first-child:hover a {
@@ -323,8 +858,7 @@ img {
   }
 }
 
-/* 分隔線（不作用於最後一個） */
-
+/* 分隔線 */
 .glass-container li:not(:last-child)::after {
   content: '';
   position: absolute;
@@ -335,20 +869,261 @@ img {
   background-color: rgba(238, 226, 226, 0.575);
 }
 
-/* 針對行動裝置優化 */
-
-.glass-container li.touch-hover a {
-  background: rgba(181, 193, 211, 0.34);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(14.9px);
-  -webkit-backdrop-filter: blur(14.9px);
-  color: #2a2d50;
+/*月亮logo*/
+.glass-container li:first-child a {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-.glass-container li:first-child.touch-hover a {
-  border-radius: 50px 0 0 50px;
+.glass-container li:first-child a::before {
+  content: '';
+  position: relative;
+  top: -0.5rem;
+  width: 24px; /* 月亮的大小 */
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  box-shadow: 7px 7px 0 0px #e0e5e2;
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
-.glass-container li:last-child.touch-hover a {
-  border-radius: 0 50px 50px 0;
+.glass-container li:first-child a:hover::before {
+  box-shadow: 7px 7px 0 0px #ffffff;
+  transform: rotate(360deg);
+}
+.glass-container li:first-child a:hover span {
+  color: #ffffff;
+}
+
+/*流星*/
+.shooting-star {
+  position: absolute;
+  width: 6px; /* 流星核心的大小 */
+  height: 4px;
+  /* background: #fff; */
+  border-radius: 50%;
+  /* opacity: 0; */
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.1),
+    0 0 0 10px rgba(255, 255, 255, 0.1), 0 0 22px rgba(255, 255, 255, 1);
+  transform-origin: center center;
+  animation: a_slow_twinkle 1.5s ease-in-out infinite;
+}
+.shooting-star::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 300px; /* 尾巴長度 */
+  height: 1px;
+  background: linear-gradient(to right, #fff, transparent);
+}
+@keyframes a_slow_twinkle {
+  0%,
+  100% {
+    /* 開始結束 */
+    box-shadow: inset 0 0 2px 2px rgba(255, 255, 255, 0.5),
+      0 0 0 2px rgba(255, 255, 255, 0.1), 0 0 0 4px rgba(255, 255, 255, 0.1),
+      0 0 10px rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    /* 中間最亮*/
+    box-shadow: inset 0 0 4px 4px rgba(255, 255, 255, 1),
+      0 0 0 4px rgba(255, 255, 255, 0.1), 0 0 0 8px rgba(255, 255, 255, 0.1),
+      0 0 20px rgba(255, 255, 255, 1);
+  }
+}
+
+/*屬標樣式*/
+.custom-cursor {
+  position: fixed;
+  z-index: 9999;
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  left: 0;
+  top: 0;
+}
+
+.custom-cursor::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.custom-cursor.hover {
+  width: 50px;
+  height: 50px;
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.custom-cursor.hover::after {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/*滾動提示*/
+.scroll-prompt {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  flex-direction: column; /* 讓內部元素垂直排列 */
+  align-items: center;
+  text-decoration: none; /* 移除 a 標籤的預設底線 */
+  cursor: none; /* 繼續使用您的自訂鼠標 */
+  padding: 20px 35px;
+}
+
+/* 滑鼠滾輪圖示 */
+.scroll-mouse {
+  width: 18px;
+  height: 32px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 15px;
+  position: relative;
+}
+
+.mouse-wheel {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 2.5px;
+  height: 5px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 2px;
+  animation: scroll-wheel-anim 1.8s cubic-bezier(0.17, 0.67, 0.83, 0.67)
+    infinite;
+}
+
+@keyframes scroll-wheel-anim {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, 12px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+}
+
+/* 向下箭頭的容器和樣式 */
+.scroll-arrow-container {
+  margin-top: 2px;
+  height: 20px;
+}
+
+.scroll-down-arrow {
+  width: 12px;
+  height: 12px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(-45deg);
+  animation: bounce-arrow 2s infinite;
+}
+
+/* 我們需要調整一下動畫，讓它在原地上下跳動 */
+@keyframes bounce-arrow {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0) rotate(-45deg);
+    opacity: 0.8;
+  }
+  40% {
+    transform: translateY(8px) rotate(-45deg);
+    opacity: 1;
+  }
+  60% {
+    transform: translateY(4px) rotate(-45deg);
+    opacity: 1;
+  }
+}
+/* ---- 下滑式顏色選擇面板 ---- */
+
+/* 1. 按鈕的父容器，需要設為定位基準以便面板定位 */
+.product-controls {
+  position: relative;
+  padding-bottom: 85px;
+}
+.color-palette {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border-radius: 50px; /* 膠囊形狀 */
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  padding: 12px;
+  gap: 18px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+/* 面板顯示時的樣式 */
+.color-palette.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.color-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: none;
+  transition: background-color 0.3s ease;
+}
+.color-option:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 顏色圓點 */
+.color-option .color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  cursor: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.color-option .color-swatch:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+.color-palette .color-name {
+  font-family: 'Cabin', sans-serif;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
 }

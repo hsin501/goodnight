@@ -5,7 +5,13 @@ const threeApp = {
   camera: null,
   renderer: null,
   animationLoopCallbacks: [],
+  scenesToRender: [],
 };
+
+export function addSceneToRender(sceneData) {
+  threeApp.scenesToRender.push(sceneData);
+}
+
 export function setupThreeScene() {
   threeApp.canvas = document.querySelector('.webgl');
   if (!threeApp.canvas) {
@@ -19,12 +25,7 @@ export function setupThreeScene() {
 
   // 創建相機 (Camera)
   const aspectRatio = window.innerWidth / window.innerHeight;
-  threeApp.camera = new THREE.PerspectiveCamera(
-    45,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    100
-  );
+  threeApp.camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.1, 100);
 
   //創建渲染器 (Renderer)
   threeApp.renderer = new THREE.WebGLRenderer({
@@ -32,11 +33,9 @@ export function setupThreeScene() {
     antialias: true,
     alpha: true,
   });
+  threeApp.renderer.setClearColor(0x000000, 0);
   threeApp.renderer.setSize(window.innerWidth, window.innerHeight);
   threeApp.renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-  //啟用剪裁
-  threeApp.renderer.setScissorTest(true);
 
   //添加光源 (Lights)
   threeApp.renderer.shadowMap.enabled = true;
@@ -103,36 +102,68 @@ function setupResizeHandler() {
 
 //動畫循環
 function startAnimationLoop() {
-  const placeholder = document.querySelector('#section1 .threejs-placeholder');
-  if (!placeholder) {
-    console.error('找不到 #section1 裡面的 .threejs-placeholder！');
-    // 如果找不到，就執行一個空的迴圈
-    requestAnimationFrame(startAnimationLoop);
-    return;
-  }
-
   requestAnimationFrame(startAnimationLoop);
   threeApp.renderer.clear();
-
-  const rect = placeholder.getBoundingClientRect();
-
-  if (rect.width <= 0 || rect.height <= 0) {
-    return; // 如果沒尺寸，就不用畫
-  }
-  // 無論模型是否可見，都設定剪裁區
-  const bottom = threeApp.renderer.domElement.clientHeight - rect.bottom;
-  threeApp.renderer.setScissor(rect.left, bottom, rect.width, rect.height);
-  threeApp.renderer.setViewport(rect.left, bottom, rect.width, rect.height);
-  threeApp.camera.aspect = rect.width / rect.height;
-  threeApp.camera.updateProjectionMatrix();
 
   threeApp.animationLoopCallbacks.forEach((callbackItem) => {
     if (typeof callbackItem.update === 'function') {
       callbackItem.update();
     }
   });
-  ///渲染場景
+  // --- 第一次渲染：渲染全螢幕背景 (粒子) ---
+  // 1. 確保所有模型都不可見
+  threeApp.scenesToRender.forEach((s) => {
+    if (s.modelData && s.modelData.modelScene) {
+      s.modelData.modelScene.visible = false;
+    }
+  });
+
+  // 2. 關閉剪裁，使用全螢幕視口來渲染背景
+  threeApp.renderer.setScissorTest(false);
+  const { clientWidth, clientHeight } = threeApp.renderer.domElement;
+  threeApp.renderer.setViewport(0, 0, clientWidth, clientHeight);
+  threeApp.camera.aspect = clientWidth / clientHeight;
+  threeApp.camera.updateProjectionMatrix();
+
+  // 3. 渲染背景 (此時只有粒子是可見的)
   threeApp.renderer.render(threeApp.scene, threeApp.camera);
+
+  //啟用剪裁
+  threeApp.renderer.setScissorTest(true);
+
+  threeApp.scenesToRender.forEach((sceneData) => {
+    const placeholder = sceneData.placeholder;
+    const rect = placeholder.getBoundingClientRect();
+
+    if (
+      rect.bottom < 0 ||
+      rect.top > threeApp.renderer.domElement.clientHeight ||
+      rect.right < 0 ||
+      rect.left > threeApp.renderer.domElement.clientWidth
+    ) {
+      return;
+    }
+
+    threeApp.scenesToRender.forEach((s) => {
+      s.modelData.modelScene.visible = false;
+    });
+
+    sceneData.modelData.modelScene.visible = true;
+
+    // 設定剪裁區
+    const bottom = threeApp.renderer.domElement.clientHeight - rect.bottom;
+    threeApp.renderer.setScissor(rect.left, bottom, rect.width, rect.height);
+    threeApp.renderer.setViewport(rect.left, bottom, rect.width, rect.height);
+
+    threeApp.camera.aspect = rect.width / rect.height;
+    threeApp.camera.updateProjectionMatrix();
+
+    ///渲染場景
+    threeApp.renderer.render(threeApp.scene, threeApp.camera);
+  });
+
+  // 關閉剪裁測試，以防影響其他可能的渲染
+  threeApp.renderer.setScissorTest(false);
 }
 
 export function addAnimationLoopCallback(callbackObject) {
