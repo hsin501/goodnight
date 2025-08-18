@@ -30,7 +30,7 @@ export function setupThreeScene() {
   //創建渲染器 (Renderer)
   threeApp.renderer = new THREE.WebGLRenderer({
     canvas: threeApp.canvas,
-    antialias: true,
+    antialias: false,
     alpha: true,
   });
   threeApp.renderer.setClearColor(0x000000, 0);

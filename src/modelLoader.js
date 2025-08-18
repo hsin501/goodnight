@@ -1,14 +1,16 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { DRACOLoader } from 'three/examples/jsm/Addons.js';
-
-//導出一個函數來載入模型
+import { modelMaterials } from './modelColorChanger';
+import { mod } from 'three/tsl';
+//載入模型
 export function loadMyModel(scene, config) {
   return new Promise((resolve, reject) => {
     const modelData = {
       modelScene: null,
       containerMesh: null,
       labelMesh: null,
+      capMesh: null,
       config: config,
     };
     const gltfLoader = new GLTFLoader();
@@ -35,7 +37,7 @@ export function loadMyModel(scene, config) {
           config.position.z
         );
         modelData.modelScene.visible = false;
-
+        modelMaterials[config.sectionId] = {};
         // 遍歷模型中的所有子物件，找到我們需要的「瓶子」和「標籤」
         modelData.modelScene.traverse((child) => {
           if (child.isMesh) {
@@ -49,6 +51,7 @@ export function loadMyModel(scene, config) {
               child.getWorldPosition(new THREE.Vector3())
             );
 
+            //處理平身
             if (child.name === config.containerName) {
               modelData.containerMesh = child;
               console.log('找到瓶子:', child.name);
@@ -62,15 +65,26 @@ export function loadMyModel(scene, config) {
                 newMaterial.clearcoat = 0.8;
                 newMaterial.clearcoatRoughness = 0.2;
                 modelData.containerMesh.material = newMaterial;
-
-                console.log(
-                  `瓶子網格 "${child.name}" 發現原始材質:`,
-                  child.material
-                );
+                //
+                modelMaterials[config.sectionId].containerMaterial =
+                  newMaterial;
+                // console.log(
+                //   `瓶子網格 "${child.name}" 發現原始材質:`,
+                //   child.material
+                // );
               } else {
                 console.warn(
                   `瓶子網格 "${child.name}" 沒有原始材質，已創建預設材質。`
                 );
+              }
+            } else if (config.capName && child.name === config.capName) {
+              modelData.capMesh = child;
+              console.log('找到蓋子:', child.name);
+              if (child.material) {
+                const newCapMaterial = child.material.clone();
+                newCapMaterial.roughness = 0.35;
+                modelData.capMesh.material = newCapMaterial;
+                modelMaterials[config.sectionId].capMaterial = newCapMaterial;
               }
             } else if (child.name === config.labelName) {
               modelData.labelMesh = child;

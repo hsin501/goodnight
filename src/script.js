@@ -9,14 +9,13 @@ import {
 import { loadMyModel } from './modelLoader.js';
 import {
   initOrbitControls,
-  // controlModelBySection,
   startResettingAnimation,
   updateOrbitControls,
   controlState,
 } from './orbitControlsManager.js';
 import { RGBELoader } from 'three/examples/jsm/Addons.js';
 import { initCustomCursor } from './customCursor.js';
-import { color } from 'three/tsl';
+import { changeModelColor } from './modelColorChanger.js';
 
 // ---- Loading Screen ----
 window.addEventListener('load', () => {
@@ -43,6 +42,7 @@ const modelsConfig = [
     modelPath: './static/model/bodywash.glb',
     containerName: 'BodyWash_Bottle', // 瓶身名稱
     labelName: 'BodyWash_Label', //標籤名稱
+    capName: 'BodyWash_Cap', // 蓋子名稱
     scale: { x: 1.8, y: 1.8, z: 1.8 }, // 模型的縮放大小
     position: { x: 0, y: -2, z: 0 }, // 模型的位置
   },
@@ -51,6 +51,7 @@ const modelsConfig = [
     modelPath: './static/model/cream.glb',
     containerName: 'FaceCream_Jar', // 瓶身名稱
     labelName: 'FaceCream_Label', //標籤名稱
+    capName: 'FaceCream_Cap', // 蓋子名稱
     scale: { x: 2, y: 2, z: 2 }, // 模型的縮放大小
     position: { x: 0, y: -1.5, z: 0 }, // 模型的位置
   },
@@ -68,15 +69,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initParallaxClouds();
   initStarParallax();
   initCustomCursor();
-
-  //首頁底下scroll平滑滾動至s1
-  // const scrollPrompt = document.querySelector('.scroll-prompt');
-  // if (scrollPrompt) {
-  //   scrollPrompt.addEventListener('click', (e) => {
-  //     e.preventDefault();
-  //     scrollToSection(1);
-  //   });
-  // }
 
   const lenis = new Lenis({
     duration: 1.8,
@@ -140,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log(`在 ${sectionId} 中選擇了顏色: ${colorValue}`);
 
         // 在這裡呼叫您改變 3D 模型顏色的函式
-        // changeModelColor(sectionId, colorValue);
+        changeModelColor(sectionId, colorValue);
 
         // 選擇顏色後，自動關閉所有面板
         colorPalettes.forEach((p) => p.classList.remove('is-visible'));
