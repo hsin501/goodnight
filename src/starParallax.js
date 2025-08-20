@@ -1,3 +1,5 @@
+import { addAnimationTask } from './animationManager.js';
+
 function random(min, max) {
   return Math.random() * (max - min) + min;
 }
@@ -121,46 +123,71 @@ export function initStarParallax() {
   const managerForSection3 = createShootingStarManager(section3, 10);
   const managerForSection4 = createShootingStarManager(section4, 15);
 
-  //滑鼠滾動監聽
-  let mouseX = 0;
-  let mouseY = 0;
+  //定義星星背景更新任務,從animationManager拿到state後
+  const updateStarsTask = (state) => {
+    const mouseX = state.mouseX;
+    const mouseY = state.mouseY;
+    const scrollY = state.scrollY;
 
-  window.addEventListener('mousemove', (event) => {
-    // 判斷是否在 threejs-placeholder 上
-    const isOnThreejs = event.target.closest('.threejs-placeholder');
-    if (isOnThreejs) return;
-
-    // 計算滑鼠位置相對於視窗中心的偏移百分比 (-50% to +50%)
-    mouseX = (event.clientX / window.innerWidth - 0.5) * 100;
-    mouseY = (event.clientY / window.innerHeight - 0.5) * 100;
-
-    updateTransform();
-  });
-
-  window.addEventListener('scroll', () => {
-    updateTransform();
-  });
-
-  function updateTransform() {
-    const scrollY = window.scrollY;
-    const vh = window.innerHeight;
-
-    if (scrollY > vh * 0.9 && scrollY < vh * 4.5) {
-      starsBackground.style.opacity = 1;
-    } else {
-      starsBackground.style.opacity = 0;
+    const opacity = Math.min(scrollY / window.innerHeight, 1);
+    if (starsBackground) {
+      starsBackground.style.opacity = opacity;
     }
-    // 滾動和滑鼠視差
-    stars1.style.transform = `translate(${mouseX * 0.1}px, ${
+
+    // 滾動和滑鼠視差 更新所有星星圖層的 transform 樣式
+    stars1.style.transform = `translate(${mouseX * 0.04}px, ${
       scrollY * -0.05 + mouseY * 0.05
     }px)`;
-    stars2.style.transform = `translate(${mouseX * 0.3}px, ${
+    stars2.style.transform = `translate(${mouseX * 0.05}px, ${
       scrollY * -0.15 + mouseY * 0.15
     }px)`;
-    stars3.style.transform = `translate(${mouseX * 0.6}px, ${
+    stars3.style.transform = `translate(${mouseX * 0.06}px, ${
       scrollY * -0.25 + mouseY * 0.3
     }px)`;
+
+    if (!managerForSection3 || !managerForSection4) return;
     managerForSection3.updateShootingStars();
     managerForSection4.updateShootingStars();
-  }
+  };
+  addAnimationTask(updateStarsTask);
+  console.log('Star parallax initialized');
 }
+
+// //滑鼠滾動監聽
+// let mouseX = 0;
+// let mouseY = 0;
+// window.addEventListener('mousemove', (event) => {
+//   // 判斷是否在 threejs-placeholder 上
+//   const isOnThreejs = event.target.closest('.threejs-placeholder');
+//   if (isOnThreejs) return;
+//   // 計算滑鼠位置相對於視窗中心的偏移百分比 (-50% to +50%)
+//   mouseX = (event.clientX / window.innerWidth - 0.5) * 100;
+//   mouseY = (event.clientY / window.innerHeight - 0.5) * 100;
+//   updateTransform();
+// });
+// window.addEventListener('scroll', () => {
+//   updateTransform();
+// });
+// function updateTransform() {
+//   const scrollY = window.scrollY;
+//   const vh = window.innerHeight;
+
+//   if (scrollY > vh * 0.9 && scrollY < vh * 4.5) {
+//     starsBackground.style.opacity = 1;
+//   } else {
+//     starsBackground.style.opacity = 0;
+//   }
+//   // 滾動和滑鼠視差
+//   stars1.style.transform = `translate(${mouseX * 0.1}px, ${
+//     scrollY * -0.05 + mouseY * 0.05
+//   }px)`;
+//   stars2.style.transform = `translate(${mouseX * 0.3}px, ${
+//     scrollY * -0.15 + mouseY * 0.15
+//   }px)`;
+//   stars3.style.transform = `translate(${mouseX * 0.6}px, ${
+//     scrollY * -0.25 + mouseY * 0.3
+//   }px)`;
+//   managerForSection3.updateShootingStars();
+//   managerForSection4.updateShootingStars();
+// }
+// }

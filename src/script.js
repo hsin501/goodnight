@@ -16,6 +16,7 @@ import {
 import { RGBELoader } from 'three/examples/jsm/Addons.js';
 import { initCustomCursor } from './customCursor.js';
 import { changeModelColor } from './modelColorChanger.js';
+import { startAnimationManager } from './animationManager.js';
 
 // ---- Loading Screen ----
 window.addEventListener('load', () => {
@@ -64,23 +65,29 @@ const modelsConfig = [
     position: { x: 0, y: -1.8, z: 0 }, // 模型的位置
   },
 ];
+export let lenis;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  initParallaxClouds();
-  initStarParallax();
+  // 初始化屬標
   initCustomCursor();
 
-  const lenis = new Lenis({
+  lenis = new Lenis({
     duration: 1.8,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smooth: true,
     smoothTouch: true,
   });
-  function raf(time) {
-    lenis.raf(time);
-    requestAnimationFrame(raf);
+
+  initStarParallax();
+  initParallaxClouds();
+
+  //初始化three.js
+  const threeInstance = setupThreeScene();
+  if (!threeInstance) {
+    console.error('Three.js 場景初始化失敗。');
+    return;
   }
-  requestAnimationFrame(raf);
+
   // 監聽點擊滾動提示
   const scrollPrompt = document.querySelector('.scroll-prompt');
   if (scrollPrompt) {
@@ -158,12 +165,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
   }
-  //three.js
-  const threeInstance = setupThreeScene();
-  if (!threeInstance) {
-    console.error('Three.js 場景初始化失敗。');
-    return;
-  }
+  // 初始化2d動畫
+  initParallaxClouds();
+  initStarParallax();
+
+  //啟動同一動畫管理氣
+  startAnimationManager(lenis, threeInstance);
+
+  // 初始化three.js攝影機位置
   const cameraHomePosition = new THREE.Vector3(0, 0, 5);
   threeInstance.camera.position.copy(cameraHomePosition);
   // three.js 初始化 OrbitControls
