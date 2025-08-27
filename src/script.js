@@ -17,6 +17,7 @@ import { RGBELoader } from 'three/examples/jsm/Addons.js';
 import { initCustomCursor } from './customCursor.js';
 import { changeModelColor } from './modelColorChanger.js';
 import { startAnimationManager } from './animationManager.js';
+import { initShoppingCart } from './cart.js';
 
 // ---- Loading Screen ----
 window.addEventListener('load', () => {
@@ -32,11 +33,12 @@ window.addEventListener('load', () => {
 const modelsConfig = [
   {
     sectionId: 'section1',
-    modelPath: './static/model/waterspray.glb',
-    containerName: 'WaterSpray_Bottle', // 瓶身名稱
-    labelName: 'WaterSpray_Label', // 標籤名稱
-    scale: { x: 2.2, y: 2.2, z: 2.2 }, // 模型的縮放大小
-    position: { x: 0, y: -1.5, z: 0 }, // 模型的位置
+    modelPath: './static/model/facewash.glb',
+    containerName: 'FaceWash_Jar', // 瓶身名稱
+    labelName: 'FaceWash_Label', // 標籤名稱
+    capName: 'FaceWash_Cap', // 蓋子名稱
+    scale: { x: 2.5, y: 2.5, z: 2.5 }, // 模型的縮放大小
+    position: { x: 0, y: -0.8, z: 0 }, // 模型的位置
   },
   {
     sectionId: 'section2',
@@ -68,25 +70,23 @@ const modelsConfig = [
 export let lenis;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // 初始化屬標
+  initParallaxClouds();
+  initStarParallax();
   initCustomCursor();
 
-  lenis = new Lenis({
+  const lenis = new Lenis({
     duration: 1.8,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smooth: true,
     smoothTouch: true,
   });
-
-  initStarParallax();
-  initParallaxClouds();
-
-  //初始化three.js
-  const threeInstance = setupThreeScene();
-  if (!threeInstance) {
-    console.error('Three.js 場景初始化失敗。');
-    return;
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
   }
+  requestAnimationFrame(raf);
+
+  startAnimationManager(lenis);
 
   // 監聽點擊滾動提示
   const scrollPrompt = document.querySelector('.scroll-prompt');
@@ -165,14 +165,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
   }
-  // 初始化2d動畫
-  initParallaxClouds();
-  initStarParallax();
-
-  //啟動同一動畫管理氣
-  startAnimationManager(lenis, threeInstance);
-
-  // 初始化three.js攝影機位置
+  //three.js
+  const threeInstance = setupThreeScene();
+  if (!threeInstance) {
+    console.error('Three.js 場景初始化失敗。');
+    return;
+  }
   const cameraHomePosition = new THREE.Vector3(0, 0, 5);
   threeInstance.camera.position.copy(cameraHomePosition);
   // three.js 初始化 OrbitControls
@@ -201,6 +199,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   );
 
+  //Intersection Observer 畫面到幾趴時呼叫載入模型
+  const observerOptions = {
+    root: null,
+    threshold: 0.25, // 幾% 可見時觸發
+  };
+
+  //發現placeholder 進入或離開，就會觸發這個函式
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      //entry.target回報狀況的那個 placeholder DOM 元素
+      const placeholderElement = entry.target;
+
+      //從threeApp.scenesToRender中找到模型資料
+      const sceneData = threeInstance.scenesToRender.find(
+        (data) => data.placeholder === placeholderElement
+      );
+      if (sceneData) {
+        //報告是否進入畫面
+        sceneData.isVisible = entry.isIntersecting;
+      }
+    });
+  }, observerOptions);
+
+  //指派任務 : 遍歷所有模型設定，載入模型並指派事件監聽器
   for (const config of modelsConfig) {
     try {
       const sectionElement = document.getElementById(config.sectionId);
@@ -216,12 +238,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       const modelData = await loadMyModel(threeInstance.scene, config);
-      addSceneToRender({
-        modelData: modelData,
+      //
+      const sceneData = {
         placeholder: placeholderElement,
-      });
-
+        modelData: modelData,
+        isVisible: false,
+      };
+      addSceneToRender(sceneData);
+      observer.observe(placeholderElement);
       placeholderElement.addEventListener('mouseenter', () => {
+        if (!sceneData.isVisible) return;
         controlState.isResetting = false;
         controls.enabled = true;
         controls.enableZoom = true; // 啟用縮放
@@ -246,4 +272,5 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error(`為 Section ${config.sectionId} 載入或設定時失敗:`, error);
     }
   }
+  initShoppingCart(lenis);
 });

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { DRACOLoader } from 'three/examples/jsm/Addons.js';
 import { modelMaterials } from './modelColorChanger';
-import { mod } from 'three/tsl';
+
 //載入模型
 export function loadMyModel(scene, config) {
   return new Promise((resolve, reject) => {
@@ -59,8 +59,8 @@ export function loadMyModel(scene, config) {
               //為了能改變顏色 複製一份材質 並設定初始顏色
               if (child.material) {
                 const newMaterial = child.material.clone();
-                newMaterial.color.set(new THREE.Color(0xffffff));
-                newMaterial.roughness = 0.35;
+                newMaterial.color.set('#343434');
+                newMaterial.roughness = 0.25;
                 newMaterial.metalness = 0.0;
                 newMaterial.clearcoat = 0.8;
                 newMaterial.clearcoatRoughness = 0.2;
@@ -77,16 +77,21 @@ export function loadMyModel(scene, config) {
                   `瓶子網格 "${child.name}" 沒有原始材質，已創建預設材質。`
                 );
               }
-            } else if (config.capName && child.name === config.capName) {
+            }
+            // 處理瓶蓋
+            else if (config.capName && child.name === config.capName) {
               modelData.capMesh = child;
               console.log('找到蓋子:', child.name);
               if (child.material) {
                 const newCapMaterial = child.material.clone();
+                newCapMaterial.color.set('#343434');
                 newCapMaterial.roughness = 0.35;
                 modelData.capMesh.material = newCapMaterial;
                 modelMaterials[config.sectionId].capMaterial = newCapMaterial;
               }
-            } else if (child.name === config.labelName) {
+            }
+            //處理標籤
+            else if (child.name === config.labelName) {
               modelData.labelMesh = child;
               console.log('找到標籤:', child.name);
               if (child.material) {

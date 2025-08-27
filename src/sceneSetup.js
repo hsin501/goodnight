@@ -1,6 +1,4 @@
 import * as THREE from 'three';
-import { lenis } from './script.js';
-
 const threeApp = {
   canvas: null,
   scene: null,
@@ -9,15 +7,8 @@ const threeApp = {
   animationLoopCallbacks: [],
   scenesToRender: [],
 };
-// 快取更新函式
-function updateAllRects() {
-  threeApp.scenesToRender.forEach((sceneData) => {
-    sceneData.rect = sceneData.placeholder.getBoundingClientRect();
-  });
-}
 
 export function addSceneToRender(sceneData) {
-  sceneData.rect = sceneData.placeholder.getBoundingClientRect();
   threeApp.scenesToRender.push(sceneData);
 }
 
@@ -56,12 +47,8 @@ export function setupThreeScene() {
   //設置視窗大小改變時的處理
   setupResizeHandler();
 
-  if (lenis) {
-    lenis.on('scroll', updateAllRects);
-  }
   //啟動動畫循環
-  // startAnimationLoop();
-  setupRectCachingEvents();
+  startAnimationLoop();
   console.log('Three.js 場景已成功設置。');
   return threeApp;
 }
@@ -82,8 +69,8 @@ function addLightsToScene() {
   threeApp.scene.add(keyLight.target);
   keyLight.castShadow = true;
 
-  keyLight.shadow.mapSize.width = 2048; // 陰影貼圖的解析度，越高越清晰
-  keyLight.shadow.mapSize.height = 2048;
+  keyLight.shadow.mapSize.width = 1024; // 陰影貼圖的解析度，越高越清晰
+  keyLight.shadow.mapSize.height = 1024;
   keyLight.shadow.camera.near = 0.5; // 陰影攝影機的渲染範圍
   keyLight.shadow.camera.far = 50;
 
@@ -110,82 +97,65 @@ function setupResizeHandler() {
         callbackItem.onResize({ width: newWidth, height: newHeight });
       }
     });
-    updateAllRects();
   });
 }
 
-function setupRectCachingEvents() {
-  window.addEventListener('resize', updateAllRects);
-  if (lenis) {
-    lenis.on('scroll', updateAllRects);
-  }
-}
-
 //動畫循環
-// function startAnimationLoop() {
-//   requestAnimationFrame(startAnimationLoop);
-//   threeApp.renderer.clear();
+function startAnimationLoop() {
+  requestAnimationFrame(startAnimationLoop);
+  threeApp.renderer.clear();
 
-//   threeApp.animationLoopCallbacks.forEach((callbackItem) => {
-//     if (typeof callbackItem.update === 'function') {
-//       callbackItem.update();
-//     }
-//   });
-//   // --- 第一次渲染：渲染全螢幕背景 (粒子) ---
-//   // 1. 確保所有模型都不可見
-//   threeApp.scenesToRender.forEach((s) => {
-//     if (s.modelData && s.modelData.modelScene) {
-//       s.modelData.modelScene.visible = false;
-//     }
-//   });
+  threeApp.animationLoopCallbacks.forEach((callbackItem) => {
+    if (typeof callbackItem.update === 'function') {
+      callbackItem.update();
+    }
+  });
+  // --- 第一次渲染：渲染全螢幕背景 (粒子) ---
+  // 1. 確保所有模型都不可見
+  threeApp.scenesToRender.forEach((s) => {
+    if (s.modelData && s.modelData.modelScene) {
+      s.modelData.modelScene.visible = false;
+    }
+  });
 
-//   // 2. 關閉剪裁，使用全螢幕視口來渲染背景
-//   threeApp.renderer.setScissorTest(false);
-//   const { clientWidth, clientHeight } = threeApp.renderer.domElement;
-//   threeApp.renderer.setViewport(0, 0, clientWidth, clientHeight);
-//   threeApp.camera.aspect = clientWidth / clientHeight;
-//   threeApp.camera.updateProjectionMatrix();
+  // 2. 關閉剪裁，使用全螢幕視口來渲染背景
+  threeApp.renderer.setScissorTest(false);
+  const { clientWidth, clientHeight } = threeApp.renderer.domElement;
+  threeApp.renderer.setViewport(0, 0, clientWidth, clientHeight);
+  threeApp.camera.aspect = clientWidth / clientHeight;
+  threeApp.camera.updateProjectionMatrix();
 
-//   // 3. 渲染背景 (此時只有粒子是可見的)
-//   threeApp.renderer.render(threeApp.scene, threeApp.camera);
+  // 渲染背景 (此時只有粒子是可見的)
+  threeApp.renderer.render(threeApp.scene, threeApp.camera);
 
-//   //啟用剪裁
-//   threeApp.renderer.setScissorTest(true);
+  //啟用剪裁
+  threeApp.renderer.setScissorTest(true);
 
-//   threeApp.scenesToRender.forEach((sceneData) => {
-//     const placeholder = sceneData.placeholder;
-//     const rect = placeholder.getBoundingClientRect();
+  threeApp.scenesToRender.forEach((sceneData) => {
+    if (!sceneData.isVisible) {
+      return;
+    }
+    const placeholder = sceneData.placeholder;
+    const rect = placeholder.getBoundingClientRect();
 
-//     if (
-//       rect.bottom < 0 ||
-//       rect.top > threeApp.renderer.domElement.clientHeight ||
-//       rect.right < 0 ||
-//       rect.left > threeApp.renderer.domElement.clientWidth
-//     ) {
-//       return;
-//     }
+    sceneData.modelData.modelScene.visible = true;
 
-//     threeApp.scenesToRender.forEach((s) => {
-//       s.modelData.modelScene.visible = false;
-//     });
+    // 設定剪裁區
+    const bottom = threeApp.renderer.domElement.clientHeight - rect.bottom;
+    threeApp.renderer.setScissor(rect.left, bottom, rect.width, rect.height);
+    threeApp.renderer.setViewport(rect.left, bottom, rect.width, rect.height);
 
-//     sceneData.modelData.modelScene.visible = true;
+    threeApp.camera.aspect = rect.width / rect.height;
+    threeApp.camera.updateProjectionMatrix();
 
-//     // 設定剪裁區
-//     const bottom = threeApp.renderer.domElement.clientHeight - rect.bottom;
-//     threeApp.renderer.setScissor(rect.left, bottom, rect.width, rect.height);
-//     threeApp.renderer.setViewport(rect.left, bottom, rect.width, rect.height);
+    ///渲染場景
+    threeApp.renderer.render(threeApp.scene, threeApp.camera);
+    sceneData.modelData.modelScene.visible = false;
+  });
 
-//     threeApp.camera.aspect = rect.width / rect.height;
-//     threeApp.camera.updateProjectionMatrix();
-
-//     ///渲染場景
-//     threeApp.renderer.render(threeApp.scene, threeApp.camera);
-//   });
-
-//   // 關閉剪裁測試，以防影響其他可能的渲染
-//   threeApp.renderer.setScissorTest(false);
-// }
+  // 關閉剪裁測試，以防影響其他可能的渲染
+  threeApp.renderer.setScissorTest(false);
+}
 
 export function addAnimationLoopCallback(callbackObject) {
   if (callbackObject && typeof callbackObject.update === 'function') {
